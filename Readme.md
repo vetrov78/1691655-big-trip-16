@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
 * Студент: [Andrey Vetrov](https://up.htmlacademy.ru/ecmascript/16/user/1691655).
-* Наставник: `Неизвестно`.
+* Наставник: [Евгений Фаллер](https://htmlacademy.ru/profile/id505933).
 
 ---
 
