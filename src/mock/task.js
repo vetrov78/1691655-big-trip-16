@@ -20,16 +20,27 @@ const generatePointType = () => {
     'Restaurant',
   ];
 
-  const randomIndex = getRandomInteger(0, generatePointType.length - 1);
+  const randomIndex = getRandomInteger(0, types.length - 1);
 
   return types[randomIndex];
 };
 
-export const generateEvent = () => {
-  const destination = 'Marsel';
+const generateDestination = () => {
+  const destinations = [
+    'Chamonix',
+    'Geneva',
+    'Amsterdam',
+    'Stuttgart',
+  ];
 
-  return {
-    pointType: generatePointType(),
-    destination,
-  };
+  const randomIndex = getRandomInteger(0, destinations.length - 1);
+
+  return destinations[randomIndex];
 };
+
+export const generateEvent = () => (
+  {
+    pointType: generatePointType(),
+    destination: generateDestination(),
+  }
+);
