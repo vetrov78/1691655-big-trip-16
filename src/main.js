@@ -10,6 +10,7 @@ import { generateEvent } from './mock/task';
 
 
 const ITEMS_COUNT = 3;
+const POINTS__COUNT = 12;
 
 const controlsNavigation = document.querySelector('.trip-controls__navigation');
 const controlsFilters = document.querySelector('.trip-controls__filters');
@@ -29,6 +30,6 @@ for (let i = 0; i < ITEMS_COUNT; i++) {
   renderTemplate(itemsList, sitePointTemplate(), RenderPosition.BEFOREEND);
 }
 
-const events = Array.from({length: ITEMS_COUNT}, generateEvent);
+const events = Array.from({length: POINTS__COUNT}, generateEvent);
 
 console.log(events);

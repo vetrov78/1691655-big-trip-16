@@ -1,3 +1,5 @@
+import { ALL_TYPES_OFFERS } from '../const';
+
 // Функция из интернета по генерации случайного числа из диапазона
 // Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
 const getRandomInteger = (a = 0, b = 1) => {
@@ -21,8 +23,14 @@ const generatePointType = () => {
   ];
 
   const randomIndex = getRandomInteger(0, types.length - 1);
+  const type = types[randomIndex];
 
-  return types[randomIndex];
+  const currentTypeObject = ALL_TYPES_OFFERS.find((element) => element.type === type);
+
+  return {
+    type: type,
+    offers: currentTypeObject ? currentTypeObject['offers'] : ''
+  };
 };
 
 const generateDestination = () => {
@@ -38,9 +46,31 @@ const generateDestination = () => {
   return destinations[randomIndex];
 };
 
+const generateDescription = () => {
+  const MAX_SENTENCES_IN_DESCRIPTION = 5;
+
+  const text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.';
+  const sentencesArray = text.match(/[^.!?]+[.!?]+/g);
+  const shuffledArray = sentencesArray.sort(() => 0.5 - Math.random());
+
+  return  shuffledArray.slice(0, getRandomInteger(0, MAX_SENTENCES_IN_DESCRIPTION));
+};
+
+const generatePhotos = () => {
+  const MAX_NUMBER = 1000;
+  const numberPhotos = getRandomInteger(0, 5);
+  const getRandomPhoto = () => (
+    `http://picsum.photos/248/152?r=${Math.floor(Math.random() * MAX_NUMBER)}`
+  );
+
+  return Array.from({length: numberPhotos}, getRandomPhoto);
+};
+
 export const generateEvent = () => (
   {
     pointType: generatePointType(),
     destination: generateDestination(),
+    description: generateDescription(),
+    photos: generatePhotos(),
   }
 );
