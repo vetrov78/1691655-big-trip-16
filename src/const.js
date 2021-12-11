@@ -1,3 +1,10 @@
+export const DESTINATIONS = [
+  'Chamonix',
+  'Geneva',
+  'Amsterdam',
+  'Stuttgart',
+];
+
 export const ALL_TYPES_OFFERS = [
   {
     'type': 'Taxi',
