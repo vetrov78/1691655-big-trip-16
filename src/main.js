@@ -6,7 +6,7 @@ import { siteEditPointTemplate } from './view/site-edit-view';
 import { siteCreatePointTemplate } from './view/site-create-view';
 import { sitePointTemplate } from './view/site-point-view';
 import { renderTemplate, RenderPosition } from './render';
-import { generateEvent } from './mock/task';
+import { generateEvent, relationNameDescription } from './mock/task';
 
 
 const ITEMS_COUNT = 3;
@@ -16,6 +16,7 @@ const controlsNavigation = document.querySelector('.trip-controls__navigation');
 const controlsFilters = document.querySelector('.trip-controls__filters');
 const mainSort = document.querySelector('.trip-events');
 
+// ДОБАВЛЕНИЕ НАВИГАЦИИ И ФИЛЬТРА
 renderTemplate(controlsNavigation, siteCreateMenuTemplate(), RenderPosition.BEFOREEND);
 renderTemplate(controlsFilters, siteCreateFiltersTemplate(), RenderPosition.BEFOREEND);
 renderTemplate(mainSort, siteCreateSortTemplate(), RenderPosition.BEFOREEND);
@@ -23,13 +24,16 @@ renderTemplate(mainSort, siteCreatePointListTemplate(), RenderPosition.BEFOREEND
 
 const itemsList = mainSort.querySelector('.trip-events__list');
 
-renderTemplate(itemsList, siteEditPointTemplate(), RenderPosition.AFTERBEGIN);
-renderTemplate(itemsList, siteCreatePointTemplate(), RenderPosition.BEFOREEND);
+let events = Array.from({length: POINTS__COUNT}, generateEvent);
+// FUNCTION FROM STACKOVERFLOW.. MERGED TWO ARRAYS BY KEY
+const mergeArrays = (arr1, arr2) => (arr1.map((x) => Object.assign(x, arr2.find((y) => y.destination === x.destination))));
+events = mergeArrays(events, relationNameDescription());
+
+renderTemplate(itemsList, siteCreatePointTemplate(events[0]), RenderPosition.BEFOREEND);
+renderTemplate(itemsList, siteEditPointTemplate(events[1]), RenderPosition.AFTERBEGIN);
 
 for (let i = 0; i < ITEMS_COUNT; i++) {
   renderTemplate(itemsList, sitePointTemplate(), RenderPosition.BEFOREEND);
 }
 
-const events = Array.from({length: POINTS__COUNT}, generateEvent);
-
-console.log(events);
+console.log (events);

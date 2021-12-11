@@ -1,4 +1,4 @@
-import { ALL_TYPES_OFFERS } from '../const';
+import { ALL_TYPES_OFFERS, DESTINATIONS } from '../const';
 
 // Функция из интернета по генерации случайного числа из диапазона
 // Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
@@ -33,18 +33,10 @@ const generatePointType = () => {
   };
 };
 
-const generateDestination = () => {
-  const destinations = [
-    'Chamonix',
-    'Geneva',
-    'Amsterdam',
-    'Stuttgart',
-  ];
+const generateDestination = () => (
+  DESTINATIONS[getRandomInteger(0, DESTINATIONS.length - 1)]
+);
 
-  const randomIndex = getRandomInteger(0, destinations.length - 1);
-
-  return destinations[randomIndex];
-};
 
 const generateDescription = () => {
   const MAX_SENTENCES_IN_DESCRIPTION = 5;
@@ -53,12 +45,12 @@ const generateDescription = () => {
   const sentencesArray = text.match(/[^.!?]+[.!?]+/g);
   const shuffledArray = sentencesArray.sort(() => 0.5 - Math.random());
 
-  return  shuffledArray.slice(0, getRandomInteger(0, MAX_SENTENCES_IN_DESCRIPTION));
+  return  shuffledArray.slice(0, getRandomInteger(1, MAX_SENTENCES_IN_DESCRIPTION));
 };
 
 const generatePhotos = () => {
   const MAX_NUMBER = 1000;
-  const numberPhotos = getRandomInteger(0, 5);
+  const numberPhotos = getRandomInteger(1, 6);
   const getRandomPhoto = () => (
     `http://picsum.photos/248/152?r=${Math.floor(Math.random() * MAX_NUMBER)}`
   );
@@ -66,11 +58,24 @@ const generatePhotos = () => {
   return Array.from({length: numberPhotos}, getRandomPhoto);
 };
 
+// POINT NAME - DESCRIPTION, PHOTOS RELATION
+export const relationNameDescription = () => {
+  const result = [];
+  let item = {};
+  for (const destination of DESTINATIONS) {
+    item ={};
+    item.destination = destination;
+    item.description = generateDescription();
+    item.photos = generatePhotos();
+    result.push(item);
+  }
+
+  return result;
+};
+
 export const generateEvent = () => (
   {
     pointType: generatePointType(),
     destination: generateDestination(),
-    description: generateDescription(),
-    photos: generatePhotos(),
   }
 );
