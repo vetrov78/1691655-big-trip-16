@@ -58,7 +58,7 @@ const generatePhotos = () => {
   return Array.from({length: numberPhotos}, getRandomPhoto);
 };
 
-// POINT NAME - DESCRIPTION, PHOTOS RELATION
+// RELATION BETWEEN POINT NAME - DESCRIPTION AND PHOTOS
 export const relationNameDescription = () => {
   const result = [];
   let item = {};

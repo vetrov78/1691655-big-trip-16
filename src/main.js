@@ -8,8 +8,6 @@ import { sitePointTemplate } from './view/site-point-view';
 import { renderTemplate, RenderPosition } from './render';
 import { generateEvent, relationNameDescription } from './mock/task';
 
-
-const ITEMS_COUNT = 3;
 const POINTS__COUNT = 12;
 
 const controlsNavigation = document.querySelector('.trip-controls__navigation');
@@ -32,8 +30,8 @@ events = mergeArrays(events, relationNameDescription());
 renderTemplate(itemsList, siteCreatePointTemplate(events[0]), RenderPosition.BEFOREEND);
 renderTemplate(itemsList, siteEditPointTemplate(events[1]), RenderPosition.AFTERBEGIN);
 
-for (let i = 0; i < ITEMS_COUNT; i++) {
-  renderTemplate(itemsList, sitePointTemplate(), RenderPosition.BEFOREEND);
+for (let i = 2; i < POINTS__COUNT; i++) {
+  renderTemplate(itemsList, sitePointTemplate(events[i]), RenderPosition.BEFOREEND);
 }
 
 console.log (events);
