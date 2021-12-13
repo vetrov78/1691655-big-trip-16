@@ -10,15 +10,15 @@ export const ALL_TYPES_OFFERS = [
     'type': 'Taxi',
     'offers': [
       {
-        'id': 1,
+        'id': 'business',
         'title': 'Upgrade to a business class',
         'price': 120
       }, {
-        'id': 2,
+        'id': 'radio',
         'title': 'Choose the radio station',
         'price': 60
       }, {
-        'id': 3,
+        'id': 'uber',
         'title': 'Order Uber',
         'price': 20
       }
@@ -27,15 +27,15 @@ export const ALL_TYPES_OFFERS = [
     'type': 'Bus',
     'offers': [
       {
-        'id': 1,
+        'id': 'luggage',
         'title': 'Add luggage',
         'price': 20
       },{
-        'id': 2,
+        'id': 'meal',
         'title': 'Add meal',
         'price': 10
       }, {
-        'id': 3,
+        'id': 'seats',
         'title': 'Choose seats',
         'price': 5
       }
@@ -44,19 +44,19 @@ export const ALL_TYPES_OFFERS = [
     'type': 'Train',
     'offers': [
       {
-        'id': 1,
+        'id': 'luggage',
         'title': 'Add luggage',
         'price': 20
       },{
-        'id': 2,
+        'id': 'meal',
         'title': 'Add meal',
         'price': 10
       }, {
-        'id': 3,
+        'id': 'seats',
         'title': 'Choose seats',
         'price': 5
       }, {
-        'id': 4,
+        'id': 'comfort',
         'title': 'Switch to comfort class',
         'price': 90
       }
@@ -65,15 +65,15 @@ export const ALL_TYPES_OFFERS = [
     'type': 'Ship',
     'offers': [
       {
-        'id': 1,
+        'id': 'car',
         'title': 'Add car place',
         'price': 120
       },{
-        'id': 2,
+        'id': 'meal',
         'title': 'Add meal',
         'price': 10
       }, {
-        'id': 3,
+        'id': 'comfort',
         'title': 'Switch to comfort class',
         'price': 70
       }
@@ -82,12 +82,12 @@ export const ALL_TYPES_OFFERS = [
     'type': 'Drive',
     'offers': [
       {
-        'id': 1,
+        'id': 'transponder',
         'title': 'Toll road transponder',
         'price': 65
       },
       {
-        'id': 2,
+        'id': 'car',
         'title': 'Rent a car',
         'price': 200
       },
@@ -96,23 +96,23 @@ export const ALL_TYPES_OFFERS = [
     'type': 'Flight',
     'offers': [
       {
-        'id': 1,
+        'id': 'luggage',
         'title': 'Add luggage',
         'price': 30
       }, {
-        'id': 2,
+        'id': 'comfort',
         'title': 'Switch to comfort class',
         'price': 100
       }, {
-        'id': 3,
+        'id': 'meal',
         'title': 'Add meal',
         'price': 15
       }, {
-        'id': 4,
+        'id': 'seats',
         'title': 'Choose seats',
         'price': 5
       }, {
-        'id': 5,
+        'id': 'train',
         'title': 'Travel by train',
         'price': 40
       }
@@ -121,7 +121,7 @@ export const ALL_TYPES_OFFERS = [
     'type': 'Restaurant',
     'offers': [
       {
-        'id': 1,
+        'id': 'book',
         'title': 'Book a table',
         'price': 50
       }
