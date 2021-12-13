@@ -6,7 +6,7 @@ import { siteEditPointTemplate } from './view/site-edit-view';
 import { siteCreatePointTemplate } from './view/site-create-view';
 import { sitePointTemplate } from './view/site-point-view';
 import { renderTemplate, RenderPosition } from './render';
-import { generateEvent, relationNameDescription } from './mock/task';
+import { generateEvent, relationNameDescription } from './mock/event';
 
 const POINTS__COUNT = 12;
 
@@ -28,7 +28,7 @@ const mergeArrays = (arr1, arr2) => (arr1.map((x) => Object.assign(x, arr2.find(
 events = mergeArrays(events, relationNameDescription());
 
 renderTemplate(itemsList, siteCreatePointTemplate(events[0]), RenderPosition.BEFOREEND);
-renderTemplate(itemsList, siteEditPointTemplate(events[1]), RenderPosition.AFTERBEGIN);
+renderTemplate(itemsList, siteEditPointTemplate(events[1]), RenderPosition.BEFOREEND);
 
 for (let i = 2; i < POINTS__COUNT; i++) {
   renderTemplate(itemsList, sitePointTemplate(events[i]), RenderPosition.BEFOREEND);
