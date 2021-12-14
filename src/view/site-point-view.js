@@ -1,5 +1,21 @@
-export const sitePointTemplate = (event) => (
-  `<li class="trip-events__item">
+export const sitePointTemplate = (event) => {
+
+  const createOffersList = () => {
+    let result = '';
+    for (const offer of event.pointType.offers) {
+      if (offer.checked) {
+        result += `<li class="event__offer">
+          <span class="event__offer-title">${offer.id}</span>
+          &plus;&euro;&nbsp;
+          <span class="event__offer-price">${offer.price}</span>
+        </li>`;
+      }
+    }
+    
+    return result;
+  };
+
+  return `<li class="trip-events__item">
     <div class="event">
       <time class="event__date" datetime="2019-03-18">MAR 18</time>
       <div class="event__type">
@@ -19,11 +35,7 @@ export const sitePointTemplate = (event) => (
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-        <li class="event__offer">
-          <span class="event__offer-title">Order Uber</span>
-          &plus;&euro;&nbsp;
-          <span class="event__offer-price">20</span>
-        </li>
+        ${createOffersList()}
       </ul>
       <button class="event__favorite-btn event__favorite-btn--active" type="button">
         <span class="visually-hidden">Add to favorite</span>
@@ -36,4 +48,4 @@ export const sitePointTemplate = (event) => (
       </button>
     </div>
   </li>`
-);
+};

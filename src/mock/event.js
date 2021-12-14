@@ -2,7 +2,7 @@ import { ALL_TYPES_OFFERS, DESTINATIONS } from '../const';
 
 // Функция из интернета по генерации случайного числа из диапазона
 // Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
-const getRandomInteger = (a = 0, b = 1) => {
+export const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
 
@@ -26,6 +26,12 @@ const generatePointType = () => {
   const type = types[randomIndex];
 
   const currentTypeObject = ALL_TYPES_OFFERS.find((element) => element.type === type);
+  // ADD IS OFFER CHECKED OR NOT
+  if (currentTypeObject) {
+    for (const offer of currentTypeObject.offers) {
+      offer.checked = (getRandomInteger() === 1) ? true : false ;
+    }
+  }
 
   return {
     type: type,
@@ -36,7 +42,6 @@ const generatePointType = () => {
 const generateDestination = () => (
   DESTINATIONS[getRandomInteger(0, DESTINATIONS.length - 1)]
 );
-
 
 const generateDescription = () => {
   const MAX_SENTENCES_IN_DESCRIPTION = 5;

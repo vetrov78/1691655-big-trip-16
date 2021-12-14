@@ -2,7 +2,6 @@ import { siteCreateMenuTemplate } from './view/site-menu-view';
 import { siteCreateFiltersTemplate } from './view/site-filters-view';
 import { siteCreateSortTemplate } from './view/site-sort-view';
 import { siteCreatePointListTemplate } from './view/site-list-view';
-import { siteEditPointTemplate } from './view/site-edit-view';
 import { siteCreatePointTemplate } from './view/site-create-view';
 import { sitePointTemplate } from './view/site-point-view';
 import { renderTemplate, RenderPosition } from './render';
@@ -28,9 +27,8 @@ const mergeArrays = (arr1, arr2) => (arr1.map((x) => Object.assign(x, arr2.find(
 events = mergeArrays(events, relationNameDescription());
 
 renderTemplate(itemsList, siteCreatePointTemplate(events[0]), RenderPosition.BEFOREEND);
-renderTemplate(itemsList, siteEditPointTemplate(events[1]), RenderPosition.BEFOREEND);
 
-for (let i = 2; i < POINTS__COUNT; i++) {
+for (let i = 1; i < POINTS__COUNT; i++) {
   renderTemplate(itemsList, sitePointTemplate(events[i]), RenderPosition.BEFOREEND);
 }
 
