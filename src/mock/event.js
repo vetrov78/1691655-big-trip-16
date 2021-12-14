@@ -29,7 +29,7 @@ const generatePointType = () => {
   // ADD IS OFFER CHECKED OR NOT
   if (currentTypeObject) {
     for (const offer of currentTypeObject.offers) {
-      offer.checked = (getRandomInteger() === 1) ? true : false ;
+      offer.checked = (getRandomInteger() === 1);
     }
   }
 

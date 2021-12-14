@@ -1,13 +1,12 @@
 import { ALL_TYPES_OFFERS } from '../const';
-import { getRandomInteger } from '../mock/event';
 
 export const siteCreatePointTemplate = (event) => {
 
   const createPhotosTemplate = () => {
     let result = '';
-    // for (const photo of event['photos']) {
-    //   result += `<img class="event__photo" src="${photo}" alt="Event photo">`;
-    // }
+    for (const photo of event['photos']) {
+      result += `<img class="event__photo" src="${photo}" alt="Event photo">`;
+    }
 
     return result;
   };

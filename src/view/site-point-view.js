@@ -11,7 +11,7 @@ export const sitePointTemplate = (event) => {
         </li>`;
       }
     }
-    
+
     return result;
   };
 
@@ -47,5 +47,5 @@ export const sitePointTemplate = (event) => {
         <span class="visually-hidden">Open event</span>
       </button>
     </div>
-  </li>`
+  </li>`;
 };

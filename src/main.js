@@ -31,5 +31,3 @@ renderTemplate(itemsList, siteCreatePointTemplate(events[0]), RenderPosition.BEF
 for (let i = 1; i < POINTS__COUNT; i++) {
   renderTemplate(itemsList, sitePointTemplate(events[i]), RenderPosition.BEFOREEND);
 }
-
-console.log (events);
