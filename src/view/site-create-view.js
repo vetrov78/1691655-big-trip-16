@@ -1,4 +1,4 @@
-import { ALL_TYPES_OFFERS } from '../const';
+import { ALL_TYPES_OFFERS } from '../mock/event.js';
 
 export const siteCreatePointTemplate = (event) => {
 
