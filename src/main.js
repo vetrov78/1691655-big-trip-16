@@ -5,7 +5,6 @@ import { siteCreatePointListTemplate } from './view/site-list-view';
 import { siteCreatePointTemplate } from './view/site-create-view';
 import { sitePointTemplate } from './view/site-point-view';
 import { renderTemplate, RenderPosition } from './render';
-import { generateEvent, relationNameDescription } from './mock/event';
 
 const POINTS_COUNT = 12;
 
@@ -21,10 +20,9 @@ renderTemplate(mainSort, siteCreatePointListTemplate(), RenderPosition.BEFOREEND
 
 const itemsList = mainSort.querySelector('.trip-events__list');
 
-let events = Array.from({length: POINTS_COUNT}, generateEvent);
-// FUNCTION FROM STACKOVERFLOW.. MERGED TWO ARRAYS BY KEY
-const mergeArrays = (arr1, arr2) => (arr1.map((x) => Object.assign(x, arr2.find((y) => y.destination === x.destination))));
-events = mergeArrays(events, relationNameDescription());
+const url = 'https://16.ecmascript.pages.academy/big-trip/';
+const pointsUrl = url + 'points/Basic ' + getRandomString();
+let events = fetch
 
 renderTemplate(itemsList, siteCreatePointTemplate(events[0]), RenderPosition.BEFOREEND);
 
