@@ -1,3 +1,5 @@
+import { getRandomInteger } from '../utils';
+
 export const DESTINATIONS = [
   'Chamonix',
   'Geneva',
