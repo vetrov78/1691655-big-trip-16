@@ -5,9 +5,10 @@ import SiteFilterView from './view/site-filters-view';
 import SiteSortView from './view/site-sort-view';
 import SitePointListView from './view/site-list-view';
 
-import { siteCreatePointTemplate } from './view/site-create-view';
-import { sitePointTemplate } from './view/site-point-view';
-import { renderTemplate, RenderPosition, renderElement } from './render';
+import SiteCreatePointView from './view/site-create-view';
+import SitePointView from './view/site-point-view';
+
+import { RenderPosition, renderElement } from './render';
 import { generateEvent, relationNameDescription } from './mock/event';
 
 // const POINTS_COUNT = 12;
@@ -36,10 +37,15 @@ const fetchOptions = {
 const cb = (events) => {
   console.log(events);
 
-  renderTemplate(itemsList, siteCreatePointTemplate(events[0]), RenderPosition.BEFOREEND);
-  for (let i = 1; i < events.length; i++) {
-    renderTemplate(itemsList, sitePointTemplate(events[i]), RenderPosition.BEFOREEND);
-  }
+  events.forEach(
+    (event, i) => {
+      if (i === 0) {
+        renderElement(itemsList, new SiteCreatePointView(event).element, RenderPosition.BEFOREEND);
+      } else {
+        renderElement(itemsList, new SitePointView(event).element, RenderPosition.BEFOREEND);
+      }
+    }
+  );
 };
 
 fetch(pointsUrl, fetchOptions)
