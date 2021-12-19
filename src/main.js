@@ -3,15 +3,11 @@ import { getRandomString } from './utils';
 import SiteMenuView from './view/site-menu-view';
 import SiteFilterView from './view/site-filters-view';
 import SiteSortView from './view/site-sort-view';
-import SitePointListView from './view/site-list-view';
-
-import SiteCreatePointView from './view/site-create-view';
+import PointsListView from './view/site-list-view';
 import SitePointView from './view/site-point-view';
+import EditPointView from './view/site-edit-view';
 
 import { RenderPosition, renderElement } from './render';
-import { generateEvent, relationNameDescription } from './mock/event';
-
-// const POINTS_COUNT = 12;
 
 const controlsNavigation = document.querySelector('.trip-controls__navigation');
 const controlsFilters = document.querySelector('.trip-controls__filters');
@@ -21,9 +17,9 @@ const mainSort = document.querySelector('.trip-events');
 renderElement(controlsNavigation, new SiteMenuView().element, RenderPosition.BEFOREEND);
 renderElement(controlsFilters, new SiteFilterView().element, RenderPosition.BEFOREEND);
 renderElement(mainSort, new SiteSortView().element, RenderPosition.BEFOREEND);
-renderElement(mainSort, new SitePointListView().element, RenderPosition.BEFOREEND);
 
-const itemsList = mainSort.querySelector('.trip-events__list');
+const pointsListComponent = new PointsListView();
+renderElement(mainSort, pointsListComponent.element, RenderPosition.BEFOREEND);
 
 // GET THE DATA
 const url = 'https://16.ecmascript.pages.academy/big-trip/';
@@ -34,21 +30,37 @@ const fetchOptions = {
     'Authorization': `Basic ${getRandomString()}`,
   },
 };
-const cb = (events) => {
-  console.log(events);
+const renderBoard = (boardEvents) => {
+  // console.log(boardEvents);
 
-  events.forEach(
-    (event, i) => {
-      if (i === 0) {
-        renderElement(itemsList, new SiteCreatePointView(event).element, RenderPosition.BEFOREEND);
-      } else {
-        renderElement(itemsList, new SitePointView(event).element, RenderPosition.BEFOREEND);
-      }
+  boardEvents.forEach(
+    (event) => {
+      const pointComponent = new SitePointView(event);
+      const pointEditComponent = new EditPointView(event);
+
+      const replacePointToEditPoint = () => {
+        pointsListComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);
+      };
+
+      const replaceEditPointToPoint = () => {
+        pointsListComponent.element.replaceChild(pointComponent.element, pointEditComponent.element);
+      };
+
+      pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+        replacePointToEditPoint();
+      });
+
+      pointEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
+        evt.preventDefault();
+        replaceEditPointToPoint();
+      });
+
+      renderElement(pointsListComponent.element, pointComponent.element, RenderPosition.BEFOREEND);
     }
   );
 };
 
 fetch(pointsUrl, fetchOptions)
   .then((response) => response.json())
-  .then((events) => cb(events));
+  .then((events) => renderBoard(events));
 

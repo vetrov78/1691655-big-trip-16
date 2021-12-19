@@ -1,11 +1,11 @@
 import { createElement } from '../render';
 
-const createSitePointListTemplate = () => (
+const createPointListTemplate = () => (
   `<ul class="trip-events__list">
   </ul>`
 );
 
-export default class SitePointListView {
+export default class PointsListView {
   #element = null;
 
   get element() {
@@ -17,7 +17,7 @@ export default class SitePointListView {
   }
 
   get template() {
-    return createSitePointListTemplate();
+    return createPointListTemplate();
   }
 
   removeElement() {

@@ -59,7 +59,7 @@ const createAvailableOffers = (offers) => {
 
 const createSiteCreatePointTemplate = (event) => {
 
-  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, id, is_favorite: isFavorite, offers, type} = event;
+  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers, type} = event;
 
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
