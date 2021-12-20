@@ -1,33 +1,66 @@
-import { siteCreateMenuTemplate } from './view/site-menu-view';
-import { siteCreateFiltersTemplate } from './view/site-filters-view';
-import { siteCreateSortTemplate } from './view/site-sort-view';
-import { siteCreatePointListTemplate } from './view/site-list-view';
-import { siteCreatePointTemplate } from './view/site-create-view';
-import { sitePointTemplate } from './view/site-point-view';
-import { renderTemplate, RenderPosition } from './render';
-import { generateEvent, relationNameDescription } from './mock/event';
+import { getRandomString } from './utils';
 
-const POINTS__COUNT = 12;
+import SiteMenuView from './view/site-menu-view';
+import SiteFilterView from './view/site-filters-view';
+import SiteSortView from './view/site-sort-view';
+import PointsListView from './view/site-list-view';
+import SitePointView from './view/site-point-view';
+import EditPointView from './view/site-edit-view';
+
+import { RenderPosition, renderElement } from './render';
 
 const controlsNavigation = document.querySelector('.trip-controls__navigation');
 const controlsFilters = document.querySelector('.trip-controls__filters');
 const mainSort = document.querySelector('.trip-events');
 
 // ДОБАВЛЕНИЕ НАВИГАЦИИ И ФИЛЬТРА
-renderTemplate(controlsNavigation, siteCreateMenuTemplate(), RenderPosition.BEFOREEND);
-renderTemplate(controlsFilters, siteCreateFiltersTemplate(), RenderPosition.BEFOREEND);
-renderTemplate(mainSort, siteCreateSortTemplate(), RenderPosition.BEFOREEND);
-renderTemplate(mainSort, siteCreatePointListTemplate(), RenderPosition.BEFOREEND);
+renderElement(controlsNavigation, new SiteMenuView().element, RenderPosition.BEFOREEND);
+renderElement(controlsFilters, new SiteFilterView().element, RenderPosition.BEFOREEND);
+renderElement(mainSort, new SiteSortView().element, RenderPosition.BEFOREEND);
 
-const itemsList = mainSort.querySelector('.trip-events__list');
+const pointsListComponent = new PointsListView();
+renderElement(mainSort, pointsListComponent.element, RenderPosition.BEFOREEND);
 
-let events = Array.from({length: POINTS__COUNT}, generateEvent);
-// FUNCTION FROM STACKOVERFLOW.. MERGED TWO ARRAYS BY KEY
-const mergeArrays = (arr1, arr2) => (arr1.map((x) => Object.assign(x, arr2.find((y) => y.destination === x.destination))));
-events = mergeArrays(events, relationNameDescription());
+// GET THE DATA
+const url = 'https://16.ecmascript.pages.academy/big-trip/';
+const pointsUrl = `${url}points`;
+const fetchOptions = {
+  method: 'GET',
+  headers: {
+    'Authorization': `Basic ${getRandomString()}`,
+  },
+};
+const renderBoard = (boardEvents) => {
+  // console.log(boardEvents);
 
-renderTemplate(itemsList, siteCreatePointTemplate(events[0]), RenderPosition.BEFOREEND);
+  boardEvents.forEach(
+    (event) => {
+      const pointComponent = new SitePointView(event);
+      const pointEditComponent = new EditPointView(event);
 
-for (let i = 1; i < POINTS__COUNT; i++) {
-  renderTemplate(itemsList, sitePointTemplate(events[i]), RenderPosition.BEFOREEND);
-}
+      const replacePointToEditPoint = () => {
+        pointsListComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);
+      };
+
+      const replaceEditPointToPoint = () => {
+        pointsListComponent.element.replaceChild(pointComponent.element, pointEditComponent.element);
+      };
+
+      pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+        replacePointToEditPoint();
+      });
+
+      pointEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
+        evt.preventDefault();
+        replaceEditPointToPoint();
+      });
+
+      renderElement(pointsListComponent.element, pointComponent.element, RenderPosition.BEFOREEND);
+    }
+  );
+};
+
+fetch(pointsUrl, fetchOptions)
+  .then((response) => response.json())
+  .then((events) => renderBoard(events));
+
