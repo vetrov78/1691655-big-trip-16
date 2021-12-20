@@ -31,7 +31,7 @@ const fetchOptions = {
   },
 };
 const renderPoints = (points) => {
-  // console.log(boardEvents);
+  console.log(points);
 
   points.forEach(
     (event) => {
