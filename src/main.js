@@ -30,10 +30,10 @@ const fetchOptions = {
     'Authorization': `Basic ${getRandomString()}`,
   },
 };
-const renderBoard = (boardEvents) => {
+const renderPoints = (points) => {
   // console.log(boardEvents);
 
-  boardEvents.forEach(
+  points.forEach(
     (event) => {
       const pointComponent = new SitePointView(event);
       const pointEditComponent = new EditPointView(event);
@@ -46,13 +46,28 @@ const renderBoard = (boardEvents) => {
         pointsListComponent.element.replaceChild(pointComponent.element, pointEditComponent.element);
       };
 
+      const onEscKeyDown = (evt) => {
+        if (evt.key === 'Escape' || evt.key === 'Esc') {
+          evt.preventDefault();
+          replaceEditPointToPoint();
+          document.removeEventListener('keydown', onEscKeyDown);
+        }
+      };
+
       pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
         replacePointToEditPoint();
+        document.addEventListener('keydown', onEscKeyDown);
+      });
+
+      pointEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+        replaceEditPointToPoint();
+        document.removeEventListener('keydown', onEscKeyDown);
       });
 
       pointEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
         evt.preventDefault();
         replaceEditPointToPoint();
+        document.removeEventListener('keydown', onEscKeyDown);
       });
 
       renderElement(pointsListComponent.element, pointComponent.element, RenderPosition.BEFOREEND);
@@ -62,5 +77,5 @@ const renderBoard = (boardEvents) => {
 
 fetch(pointsUrl, fetchOptions)
   .then((response) => response.json())
-  .then((events) => renderBoard(events));
+  .then((points) => renderPoints(points));
 
