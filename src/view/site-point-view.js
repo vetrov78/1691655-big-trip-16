@@ -1,5 +1,5 @@
-import { createElement } from '../render';
-import { getDurationString } from '../utils';
+import { createElement } from '../utils/render';
+import { getDurationString } from '../utils/utils';
 import dayjs from 'dayjs';
 
 const createOffersList = (offers) => {

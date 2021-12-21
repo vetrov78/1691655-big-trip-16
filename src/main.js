@@ -1,13 +1,13 @@
-import { getRandomString } from './utils';
+import { getRandomString } from './utils/utils';
 
 import SiteMenuView from './view/site-menu-view';
-import SiteFilterView from './view/site-filters-view';
+import SiteFilterView from './view/site-filters/site-filters-view';
 import SiteSortView from './view/site-sort-view';
 import PointsListView from './view/site-list-view';
 import SitePointView from './view/site-point-view';
 import EditPointView from './view/site-edit-view';
 
-import { RenderPosition, renderElement } from './render';
+import { renderElement, RenderPosition } from './utils/render';
 
 const controlsNavigation = document.querySelector('.trip-controls__navigation');
 const controlsFilters = document.querySelector('.trip-controls__filters');
@@ -31,7 +31,7 @@ const fetchOptions = {
   },
 };
 const renderPoints = (points) => {
-  console.log(points);
+  // console.log(points);
 
   points.forEach(
     (event) => {
