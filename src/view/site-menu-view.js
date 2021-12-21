@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import { createElement } from '../utils/render.js';
 
 const createSiteMenuTemplate = () => (
   `<nav class="trip-controls__trip-tabs  trip-tabs">

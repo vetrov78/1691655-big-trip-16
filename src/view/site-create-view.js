@@ -1,5 +1,5 @@
 import { ALL_TYPES_OFFERS } from '../mock/event.js';
-import { createElement } from '../render.js';
+import { createElement } from '../utils/render.js';
 import dayjs from 'dayjs';
 
 const createEventTypeList = () => {
