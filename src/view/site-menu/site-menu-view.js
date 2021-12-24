@@ -1,11 +1,5 @@
-import { createElement } from '../utils/render.js';
-
-const createSiteMenuTemplate = () => (
-  `<nav class="trip-controls__trip-tabs  trip-tabs">
-    <a class="trip-tabs__btn  trip-tabs__btn--active" href="#">Table</a>
-    <a class="trip-tabs__btn" href="#">Stats</a>
-  </nav>`
-);
+import { createElement } from '../../utils/render.js';
+import { createSiteMenuTemplate } from './site-menu.tpl.js';
 
 export default class SiteMenuView {
   #element = null;

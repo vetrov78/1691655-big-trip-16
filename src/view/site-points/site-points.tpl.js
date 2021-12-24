@@ -1,5 +1,4 @@
-import { createElement } from '../utils/render';
-import { getDurationString } from '../utils/utils';
+import { getDurationString } from '../../utils/utils';
 import dayjs from 'dayjs';
 
 const createOffersList = (offers) => {
@@ -15,7 +14,7 @@ const createOffersList = (offers) => {
   return result;
 };
 
-const createSitePointTemplate = (event) => {
+export const createSitePointTemplate = (event) => {
 
   const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, is_favorite: isFavorite, offers, type} = event;
   const datesDiff = dayjs(dateTo).diff(dayjs(dateFrom), 'm');
@@ -56,28 +55,3 @@ const createSitePointTemplate = (event) => {
     </div>
   </li>`;
 };
-
-export default class SitePointView {
-  #element = null;
-  #event = null;
-
-  constructor (event = {}) {
-    this.#event = event;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  get template() {
-    return createSitePointTemplate(this.#event);
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
-}

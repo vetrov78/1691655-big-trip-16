@@ -1,9 +1,5 @@
-import { createElement } from '../utils/render';
-
-const createPointListTemplate = () => (
-  `<ul class="trip-events__list">
-  </ul>`
-);
+import { createElement } from '../../utils/render';
+import { createPointListTemplate } from './site-list.tpl';
 
 export default class PointsListView {
   #element = null;

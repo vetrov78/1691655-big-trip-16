@@ -1,5 +1,4 @@
-import { ALL_TYPES_OFFERS } from '../mock/event.js';
-import { createElement } from '../utils/render.js';
+import { ALL_TYPES_OFFERS } from '../../mock/event.js';
 import dayjs from 'dayjs';
 
 const createEventTypeList = () => {
@@ -57,7 +56,7 @@ const createAvailableOffers = (offers) => {
           </div>`;
 };
 
-const createSiteCreatePointTemplate = (event) => {
+export const createSiteCreatePointTemplate = (event) => {
 
   const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers, type} = event;
 
@@ -125,28 +124,3 @@ const createSiteCreatePointTemplate = (event) => {
     </form>
   </li>`;
 };
-
-export default class SiteCreatePointView {
-  #element = null;
-  #event = null;
-
-  constructor (event = {}) {
-    this.#event = event;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  get template() {
-    return createSiteCreatePointTemplate(this.#event);
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
-}
