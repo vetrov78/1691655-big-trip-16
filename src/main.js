@@ -21,17 +21,7 @@ renderElement(mainSort, new SiteSortView().element, RenderPosition.BEFOREEND);
 const pointsListComponent = new PointsListView();
 renderElement(mainSort, pointsListComponent.element, RenderPosition.BEFOREEND);
 
-// GET THE DATA
-const url = 'https://16.ecmascript.pages.academy/big-trip/points';
-const fetchOptions = {
-  method: 'GET',
-  headers: {
-    'Authorization': `Basic ${getRandomString()}`,
-  },
-};
 const renderPoints = (points) => {
-  // console.log(points);
-
   points.forEach(
     (event) => {
       const pointComponent = new SitePointView(event);
@@ -53,18 +43,17 @@ const renderPoints = (points) => {
         }
       };
 
-      pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      pointComponent.setOpenEditHandler (() => {
         replacePointToEditPoint();
         document.addEventListener('keydown', onEscKeyDown);
       });
 
-      pointEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      pointEditComponent.setCloseClickHandler (() => {
         replaceEditPointToPoint();
         document.removeEventListener('keydown', onEscKeyDown);
       });
 
-      pointEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
-        evt.preventDefault();
+      pointEditComponent.setFormSubmitHandler(() => {
         replaceEditPointToPoint();
         document.removeEventListener('keydown', onEscKeyDown);
       });
@@ -74,7 +63,25 @@ const renderPoints = (points) => {
   );
 };
 
+const renderBoard = (points) => {
+  console.log(points);
+  if (points.length) {
+    renderPoints(points);
+  }
+  else {
+    console.log('Empty');
+    // Приглашение добавить новую точку
+  }
+};
+
+const url = 'https://16.ecmascript.pages.academy/big-trip/points';
+const fetchOptions = {
+  method: 'GET',
+  headers: {
+    'Authorization': `Basic ${getRandomString()}`,
+  },
+};
 fetch(url, fetchOptions)
   .then((response) => response.json())
-  .then((points) => renderPoints(points));
+  .then((points) => renderBoard(points));
 

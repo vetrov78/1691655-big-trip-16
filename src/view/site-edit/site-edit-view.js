@@ -1,28 +1,36 @@
 
+import AbstractView from '../abstract-view';
 import { createEditPointTemplate } from './site-edit.tpl';
-import { createElement } from '../../utils/render';
 
-export default class EditPointView {
-  #element = null;
+export default class EditPointView extends AbstractView {
   #event = null;
 
-  constructor (event = {}) {
+  constructor (event) {
+    super();
     this.#event = event;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createEditPointTemplate(this.#event);
   }
 
-  removeElement() {
-    this.#element = null;
+  #closeClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.closeClick();
+  }
+
+  setCloseClickHandler = (callback) => {
+    this._callback.closeClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
+  }
+
+  #submitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  setFormSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.querySelector('form').addEventListener('submit', this.#submitHandler);
   }
 }

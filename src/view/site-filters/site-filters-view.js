@@ -1,22 +1,8 @@
-import { createElement } from '../../utils/render';
+import AbstractView from '../abstract-view';
 import { createSiteFiltersTemplate } from './site-filters.tpl';
 
-export default class SiteFilterView {
-  #element = null;
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
+export default class SiteFilterView extends AbstractView {
   get template() {
     return createSiteFiltersTemplate();
-  }
-
-  removeELement() {
-    this.#element = null;
   }
 }

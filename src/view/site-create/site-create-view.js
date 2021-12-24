@@ -1,27 +1,15 @@
+import AbstractView from '../abstract-view';
 import { createSiteCreatePointTemplate } from './site-create.tpl';
-import { createElement } from '../../utils/render';
 
-export default class SiteCreatePointView {
-  #element = null;
+export default class SiteCreatePointView extends AbstractView {
   #event = null;
 
-  constructor (event = {}) {
+  constructor (event) {
+    super();
     this.#event = event;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createSiteCreatePointTemplate(this.#event);
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

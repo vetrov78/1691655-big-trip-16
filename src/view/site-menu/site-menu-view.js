@@ -1,22 +1,8 @@
-import { createElement } from '../../utils/render.js';
+import AbstractView from '../abstract-view.js';
 import { createSiteMenuTemplate } from './site-menu.tpl.js';
 
-export default class SiteMenuView {
-  #element = null;
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
+export default class SiteMenuView extends AbstractView {
   get template() {
     return createSiteMenuTemplate();
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }
