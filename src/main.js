@@ -8,6 +8,7 @@ import SitePointView from './view/site-points/site-point-view';
 import EditPointView from './view/site-edit/site-edit-view';
 
 import { renderElement, RenderPosition } from './utils/render';
+import SiteEmptyView from './view/site-empty/site-empty-view';
 
 const controlsNavigation = document.querySelector('.trip-controls__navigation');
 const controlsFilters = document.querySelector('.trip-controls__filters');
@@ -18,10 +19,10 @@ renderElement(controlsNavigation, new SiteMenuView().element, RenderPosition.BEF
 renderElement(controlsFilters, new SiteFilterView().element, RenderPosition.BEFOREEND);
 renderElement(mainSort, new SiteSortView().element, RenderPosition.BEFOREEND);
 
-const pointsListComponent = new PointsListView();
-renderElement(mainSort, pointsListComponent.element, RenderPosition.BEFOREEND);
-
 const renderPoints = (points) => {
+  const pointsListComponent = new PointsListView();
+  renderElement(mainSort, pointsListComponent.element, RenderPosition.BEFOREEND);
+
   points.forEach(
     (event) => {
       const pointComponent = new SitePointView(event);
@@ -64,13 +65,13 @@ const renderPoints = (points) => {
 };
 
 const renderBoard = (points) => {
-  console.log(points);
-  if (points.length) {
+  if (points.length > 0) {
     renderPoints(points);
   }
   else {
-    console.log('Empty');
     // Приглашение добавить новую точку
+    const invitationComponent = new SiteEmptyView();
+    renderElement(mainSort, invitationComponent.element, RenderPosition.BEFOREEND);
   }
 };
 
@@ -84,4 +85,3 @@ const fetchOptions = {
 fetch(url, fetchOptions)
   .then((response) => response.json())
   .then((points) => renderBoard(points));
-
