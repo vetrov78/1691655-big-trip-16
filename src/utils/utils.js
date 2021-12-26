@@ -23,3 +23,5 @@ export const getDurationString = (durationInMinutes) => {
 
   return `${daysDisplay} ${houtsDisplay} ${minutesDisplay}`;
 };
+
+export const isEscPressed = (evt) => (evt.key === 'Escape' || evt.key === 'Esc');

@@ -1,13 +1,14 @@
-import { getRandomString } from './utils/utils';
+import { getRandomString, isEscPressed } from './utils/utils';
 
-import SiteMenuView from './view/site-menu-view';
+import SiteMenuView from './view/site-menu/site-menu-view';
 import SiteFilterView from './view/site-filters/site-filters-view';
-import SiteSortView from './view/site-sort-view';
-import PointsListView from './view/site-list-view';
-import SitePointView from './view/site-point-view';
-import EditPointView from './view/site-edit-view';
+import SiteSortView from './view/site-sort/site-sort-view';
+import PointsListView from './view/site-list/site-list-view';
+import SitePointView from './view/site-points/site-point-view';
+import EditPointView from './view/site-edit/site-edit-view';
 
 import { renderElement, RenderPosition } from './utils/render';
+import SiteEmptyView from './view/site-empty/site-empty-view';
 
 const controlsNavigation = document.querySelector('.trip-controls__navigation');
 const controlsFilters = document.querySelector('.trip-controls__filters');
@@ -18,20 +19,9 @@ renderElement(controlsNavigation, new SiteMenuView().element, RenderPosition.BEF
 renderElement(controlsFilters, new SiteFilterView().element, RenderPosition.BEFOREEND);
 renderElement(mainSort, new SiteSortView().element, RenderPosition.BEFOREEND);
 
-const pointsListComponent = new PointsListView();
-renderElement(mainSort, pointsListComponent.element, RenderPosition.BEFOREEND);
-
-// GET THE DATA
-const url = 'https://16.ecmascript.pages.academy/big-trip/';
-const pointsUrl = `${url}points`;
-const fetchOptions = {
-  method: 'GET',
-  headers: {
-    'Authorization': `Basic ${getRandomString()}`,
-  },
-};
 const renderPoints = (points) => {
-  // console.log(points);
+  const pointsListComponent = new PointsListView();
+  renderElement(mainSort, pointsListComponent.element, RenderPosition.BEFOREEND);
 
   points.forEach(
     (event) => {
@@ -47,25 +37,24 @@ const renderPoints = (points) => {
       };
 
       const onEscKeyDown = (evt) => {
-        if (evt.key === 'Escape' || evt.key === 'Esc') {
+        if (isEscPressed(evt)) {
           evt.preventDefault();
           replaceEditPointToPoint();
           document.removeEventListener('keydown', onEscKeyDown);
         }
       };
 
-      pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      pointComponent.setOpenEditHandler (() => {
         replacePointToEditPoint();
         document.addEventListener('keydown', onEscKeyDown);
       });
 
-      pointEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      pointEditComponent.setCloseClickHandler (() => {
         replaceEditPointToPoint();
         document.removeEventListener('keydown', onEscKeyDown);
       });
 
-      pointEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
-        evt.preventDefault();
+      pointEditComponent.setFormSubmitHandler(() => {
         replaceEditPointToPoint();
         document.removeEventListener('keydown', onEscKeyDown);
       });
@@ -75,7 +64,24 @@ const renderPoints = (points) => {
   );
 };
 
-fetch(pointsUrl, fetchOptions)
-  .then((response) => response.json())
-  .then((points) => renderPoints(points));
+const renderBoard = (points) => {
+  if (points.length > 0) {
+    renderPoints(points);
+  }
+  else {
+    // Приглашение добавить новую точку
+    const invitationComponent = new SiteEmptyView();
+    renderElement(mainSort, invitationComponent.element, RenderPosition.BEFOREEND);
+  }
+};
 
+const url = 'https://16.ecmascript.pages.academy/big-trip/points';
+const fetchOptions = {
+  method: 'GET',
+  headers: {
+    'Authorization': `Basic ${getRandomString()}`,
+  },
+};
+fetch(url, fetchOptions)
+  .then((response) => response.json())
+  .then((points) => renderBoard(points));

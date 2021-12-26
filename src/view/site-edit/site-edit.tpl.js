@@ -1,6 +1,5 @@
 import dayjs from 'dayjs';
-import { createElement } from '../utils/render';
-import { ALL_TYPES_OFFERS } from '../mock/event';
+import { ALL_TYPES_OFFERS } from '../../mock/event';
 
 const createEventTypeList = () => {
   let result = '';
@@ -41,7 +40,7 @@ const createAvailableOffers = (offers) => {
           </div>`;
 };
 
-const createEditPointTemplate = (event) => {
+export const createEditPointTemplate = (event) => {
   const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers, type} = event;
 
   return `<li class="trip-events__item">
@@ -108,28 +107,3 @@ const createEditPointTemplate = (event) => {
             </form>
           </li>`;
 };
-
-export default class EditPointView {
-  #element = null;
-  #event = null;
-
-  constructor (event = {}) {
-    this.#event = event;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  get template() {
-    return createEditPointTemplate(this.#event);
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
-}

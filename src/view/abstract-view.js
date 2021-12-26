@@ -1,12 +1,14 @@
 import { createElement } from '../utils/render';
 
-const createPointListTemplate = () => (
-  `<ul class="trip-events__list">
-  </ul>`
-);
-
-export default class PointsListView {
+export default class AbstractView {
   #element = null;
+  _callback = {}
+
+  constructor() {
+    if (new.target === AbstractView) {
+      throw new Error ('Can\'t instantiate AbstractView, only concrete one.');
+    }
+  }
 
   get element() {
     if (!this.#element) {
@@ -17,7 +19,7 @@ export default class PointsListView {
   }
 
   get template() {
-    return createPointListTemplate();
+    throw new Error ('Abstract method not implemented: get template');
   }
 
   removeElement() {
