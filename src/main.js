@@ -7,17 +7,19 @@ import PointsListView from './view/site-list/site-list-view';
 import SitePointView from './view/site-points/site-point-view';
 import EditPointView from './view/site-edit/site-edit-view';
 
-import { renderElement, RenderPosition } from './utils/render';
+import { render, RenderPosition } from './utils/render';
 import SiteEmptyView from './view/site-empty/site-empty-view';
+import BoardPresenter from './presenter/board-presenter';
 
 const controlsNavigation = document.querySelector('.trip-controls__navigation');
 const controlsFilters = document.querySelector('.trip-controls__filters');
 const mainSort = document.querySelector('.trip-events');
 
+const boardPresenter = new BoardPresenter(mainSort);
+
 // ДОБАВЛЕНИЕ НАВИГАЦИИ И ФИЛЬТРА
-renderElement(controlsNavigation, new SiteMenuView().element, RenderPosition.BEFOREEND);
-renderElement(controlsFilters, new SiteFilterView().element, RenderPosition.BEFOREEND);
-renderElement(mainSort, new SiteSortView().element, RenderPosition.BEFOREEND);
+render(controlsNavigation, new SiteMenuView(), RenderPosition.BEFOREEND);
+render(controlsFilters, new SiteFilterView(), RenderPosition.BEFOREEND);
 
 const renderPoints = (points) => {
   const pointsListComponent = new PointsListView();
@@ -84,4 +86,4 @@ const fetchOptions = {
 };
 fetch(url, fetchOptions)
   .then((response) => response.json())
-  .then((points) => renderBoard(points));
+  .then((points) => boardPresenter.init(points));
