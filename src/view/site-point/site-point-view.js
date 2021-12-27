@@ -22,4 +22,14 @@ export default class SitePointView extends AbstractView {
     this._callback.openClick = callback;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#openClickHandler);
   }
+
+  #favoriteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.favoriteClick();
+  }
+
+  setFavoriteClickHandler = (callback) => {
+    this._callback.favoriteClick = callback;
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
+  }
 }

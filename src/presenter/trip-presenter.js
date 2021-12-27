@@ -1,4 +1,5 @@
 import { RenderPosition, render } from '../utils/render';
+import { updateItem } from '../utils/utils';
 import SiteEmptyView from '../view/site-empty/site-empty-view';
 import PointsListView from '../view/site-list/site-list-view';
 import SiteSortView from '../view/site-sort/site-sort-view';
@@ -10,17 +11,32 @@ export default class TripPresenter {
   #invitationComponent = new SiteEmptyView();
   #pointsListComponent = new PointsListView();
 
-  #tripEvents = [];
+  #tripPoints = [];
+  #pointPresenter = new Map();
+  // Для сохранения начального порядка сортировки
+  #sourcedTripPoints = [];
 
   constructor(tripContainer) {
     this.#tripContainer = tripContainer;
   }
 
-  init = (tripEvents) => {
-    this.#tripEvents = [...tripEvents];
+  init = (tripPoints) => {
+    this.#tripPoints = [...tripPoints];
+    this.#sourcedTripPoints = [...tripPoints];
 
     this.#renderSort();
     this.#renderBoard();
+    console.log(tripPoints);
+  }
+
+  #handlePointChange = (updatedPoint) => {
+    this.#tripPoints = updateItem(this.#tripPoints, updatedPoint);
+    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
+  }
+
+  #clearPointsList = () => {
+    this.#pointPresenter.forEach((presenter) => presenter.destroy());
+    this.#pointPresenter.clear();
   }
 
   #renderSort = () => {
@@ -36,16 +52,17 @@ export default class TripPresenter {
   }
 
   #renderPoints = () => {
-    this.#tripEvents.forEach(
+    this.#tripPoints.forEach(
       (point) => {
-        const pointPresenter = new PointPresenter(this.#pointsListComponent);
+        const pointPresenter = new PointPresenter(this.#pointsListComponent, this.#handlePointChange);
         pointPresenter.init(point);
+        this.#pointPresenter.set(point.id, pointPresenter);
       }
     );
   }
 
   #renderBoard = () => {
-    if (this.#tripEvents.length === 0) {
+    if (this.#tripPoints.length === 0) {
       this.#renderInvitation();
       return;
     }
