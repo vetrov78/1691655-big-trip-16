@@ -4,13 +4,13 @@ import SiteMenuView from './view/site-menu/site-menu-view';
 import SiteFilterView from './view/site-filters/site-filters-view';
 
 import { render, RenderPosition } from './utils/render';
-import BoardPresenter from './presenter/board-presenter';
+import TripPresenter from './presenter/trip-presenter';
 
 const controlsNavigation = document.querySelector('.trip-controls__navigation');
 const controlsFilters = document.querySelector('.trip-controls__filters');
 const mainSort = document.querySelector('.trip-events');
 
-const boardPresenter = new BoardPresenter(mainSort);
+const tripPresenter = new TripPresenter(mainSort);
 
 // ДОБАВЛЕНИЕ НАВИГАЦИИ И ФИЛЬТРА
 render(controlsNavigation, new SiteMenuView(), RenderPosition.BEFOREEND);
@@ -25,4 +25,4 @@ const fetchOptions = {
 };
 fetch(url, fetchOptions)
   .then((response) => response.json())
-  .then((points) => boardPresenter.init(points));
+  .then((points) => tripPresenter.init(points));

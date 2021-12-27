@@ -1,6 +1,5 @@
-
 import AbstractView from '../abstract-view';
-import { createEditPointTemplate } from './site-edit.tpl';
+import { createEditPointTemplate } from './site-point-edit.tpl';
 
 export default class EditPointView extends AbstractView {
   #event = null;

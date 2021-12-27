@@ -1,5 +1,5 @@
 import AbstractView from '../abstract-view';
-import { createSitePointTemplate } from './site-points.tpl';
+import { createSitePointTemplate } from './site-point.tpl';
 
 export default class SitePointView extends AbstractView {
   #event = null;
