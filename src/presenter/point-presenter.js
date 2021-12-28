@@ -4,7 +4,7 @@ import EditPointView from '../view/site-point-edit/site-point-edit-view';
 import { isEscPressed } from '../utils/utils';
 import { RenderPosition, render, replace, remove } from '../utils/render';
 
-const mode = {
+const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING'
 };
@@ -14,15 +14,17 @@ export default class PointPresenter {
 
   #pointsListContainer = null;
   #changeData = null;
+  #changeMode = null;
 
   #pointComponent = null;
   #pointEditComponent = null;
 
-  #mode = mode.DEFAULT;
+  #mode = Mode.DEFAULT;
 
-  constructor(pointsListContainer, changeData) {
+  constructor(pointsListContainer, changeData, changeMode) {
     this.#pointsListContainer = pointsListContainer;
     this.#changeData = changeData;
+    this.#changeMode = changeMode;
   }
 
   init = (point) => {
@@ -45,16 +47,22 @@ export default class PointPresenter {
       return;
     }
 
-    if (this.#pointsListContainer.element.contains(prevPointComponent.element)) {
+    if (this.#mode === Mode.DEFAULT) {
       replace(this.#pointComponent, prevPointComponent);
     }
 
-    if (this.#pointsListContainer.element.contains(prevEditComponent.element)) {
+    if (this.#mode === Mode.EDITING) {
       replace(this.#pointEditComponent, prevEditComponent);
     }
 
     remove(prevPointComponent);
     remove(prevEditComponent);
+  }
+
+  resetView = () => {
+    if (this.#mode !== Mode.DEFAULT) {
+      this.#replaceEditPointToPoint();
+    }
   }
 
   #onEscKeyDownHandler = (evt) => {
@@ -67,11 +75,14 @@ export default class PointPresenter {
   #replacePointToEditPoint = () => {
     replace(this.#pointEditComponent, this.#pointComponent);
     document.addEventListener('keydown', this.#onEscKeyDownHandler);
+    this.#changeMode();
+    this.#mode = Mode.EDITING;
   };
 
   #replaceEditPointToPoint = () => {
     replace(this.#pointComponent, this.#pointEditComponent);
     document.removeEventListener('keydown', this.#onEscKeyDownHandler);
+    this.#mode = Mode.DEFAULT;
   };
 
   #handleOpenEditCLick = () => {
