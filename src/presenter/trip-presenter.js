@@ -1,14 +1,13 @@
 import { RenderPosition, render } from '../utils/render';
 import { updateItem } from '../utils/utils';
-import SiteEmptyView from '../view/site-empty/site-empty-view';
 import PointsListView from '../view/site-list/site-list-view';
+import SitePointView from '../view/site-point/site-point-view';
 import SiteSortView from '../view/site-sort/site-sort-view';
 import PointPresenter from './point-presenter';
 
 export default class TripPresenter {
   #tripContainer = null;
   #sortComponent = new SiteSortView();
-  #invitationComponent = new SiteEmptyView();
   #pointsListComponent = new PointsListView();
 
   #tripPoints = [];
@@ -26,7 +25,7 @@ export default class TripPresenter {
 
     this.#renderSort();
     this.#renderBoard();
-    console.log(tripPoints);
+    //console.log(tripPoints);
   }
 
   #handlePointChange = (updatedPoint) => {
@@ -47,15 +46,15 @@ export default class TripPresenter {
     render(this.#tripContainer, this.#sortComponent, RenderPosition.BEFOREEND);
   }
 
-  #renderInvitation = () => {
-    render(this.#tripContainer, this.#invitationComponent, RenderPosition.BEFOREEND);
-  }
-
   #renderPointsList = () => {
     render(this.#tripContainer, this.#pointsListComponent, RenderPosition.BEFOREEND);
   }
 
   #renderPoints = () => {
+    if (this.#tripPoints.length === 0) {
+      render(this.#pointsListComponent, new SitePointView(this.#tripPoints), RenderPosition.BEFOREEND);
+      return;
+    }
     this.#tripPoints.forEach(
       (point) => {
         const pointPresenter = new PointPresenter(this.#pointsListComponent, this.#handlePointChange, this.#handleModeChange);
@@ -66,11 +65,6 @@ export default class TripPresenter {
   }
 
   #renderBoard = () => {
-    if (this.#tripPoints.length === 0) {
-      this.#renderInvitation();
-      return;
-    }
-
     this.#renderPointsList();
     this.#renderPoints();
   }
