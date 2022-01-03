@@ -14,9 +14,9 @@ const createOffersList = (offers) => {
   return result;
 };
 
-export const createSitePointTemplate = (event) => {
+export const createSitePointTemplate = (point) => {
 
-  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, is_favorite: isFavorite, offers, type} = event;
+  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, isFavorite: isFavorite, offers, type} = point;
   const datesDiff = dayjs(dateTo).diff(dayjs(dateFrom), 'm');
 
   return `<li class="trip-events__item">

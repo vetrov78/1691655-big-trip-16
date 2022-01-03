@@ -10,8 +10,6 @@ const controlsNavigation = document.querySelector('.trip-controls__navigation');
 const controlsFilters = document.querySelector('.trip-controls__filters');
 const mainSort = document.querySelector('.trip-events');
 
-const tripPresenter = new TripPresenter(mainSort);
-
 // ДОБАВЛЕНИЕ НАВИГАЦИИ И ФИЛЬТРА
 render(controlsNavigation, new SiteMenuView(), RenderPosition.BEFOREEND);
 render(controlsFilters, new SiteFilterView(), RenderPosition.BEFOREEND);
@@ -25,4 +23,6 @@ const fetchOptions = {
 };
 fetch(url, fetchOptions)
   .then((response) => response.json())
-  .then((points) => tripPresenter.init(points));
+  .then((points) => {
+    new TripPresenter(mainSort, points);
+  });

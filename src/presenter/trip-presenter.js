@@ -15,17 +15,18 @@ export default class TripPresenter {
   // Для сохранения начального порядка сортировки
   #sourcedTripPoints = [];
 
-  constructor(tripContainer) {
+  constructor(tripContainer, points) {
     this.#tripContainer = tripContainer;
+    points.forEach ((point) => {
+      point.isFavorite = point.is_favorite;
+    });
+    this.#tripPoints = [...points];
+    this.init();
   }
 
-  init = (tripPoints) => {
-    this.#tripPoints = [...tripPoints];
-    this.#sourcedTripPoints = [...tripPoints];
-
+  init = () => {
     this.#renderSort();
     this.#renderBoard();
-    //console.log(tripPoints);
   }
 
   #handlePointChange = (updatedPoint) => {

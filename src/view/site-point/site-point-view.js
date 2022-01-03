@@ -12,9 +12,9 @@ export default class SitePointView extends AbstractView {
   get template() {
     if (this.#point.length !== 0) {
       return createSitePointTemplate(this.#point);
-    } else {
-      return createEmptyTemplate();
     }
+
+    return createEmptyTemplate();
   }
 
   #openClickHandler = (evt) => {
