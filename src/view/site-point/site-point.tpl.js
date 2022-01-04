@@ -17,7 +17,7 @@ const createOffersList = (offers) => {
 export const createSitePointTemplate = (point) => {
 
   const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, isFavorite: isFavorite, offers, type} = point;
-  const datesDiff = dayjs(dateTo).diff(dayjs(dateFrom), 'm');
+  const durationInMinutes = dayjs(dateTo).diff(dayjs(dateFrom), 'm');
 
   return `<li class="trip-events__item">
     <div class="event">
@@ -32,7 +32,7 @@ export const createSitePointTemplate = (point) => {
           &mdash;
           <time class="event__end-time" datetime="${dayjs(dateTo)}">${dayjs(dateTo).format('hh:mm')}</time>
         </p>
-        <p class="event__duration">${getDurationString(datesDiff)}</p>
+        <p class="event__duration">${getDurationString(durationInMinutes)}</p>
       </div>
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${basePrice}</span>

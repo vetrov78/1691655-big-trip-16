@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 // Функция из интернета по генерации случайного числа из диапазона
 // Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
 export const getRandomInteger = (a = 0, b = 1) => {
@@ -38,4 +39,13 @@ export const updateItem = (items, update) => {
     update,
     ...items.slice(index + 1),
   ];
+};
+
+export const sortTimeDown = (pointA, pointB) => {
+  const {date_from: dateFromA, date_to: dateToA} = pointA;
+  const {date_from: dateFromB, date_to: dateToB} = pointB;
+  const durationInMinutesA = dayjs(dateToA).diff(dayjs(dateFromA), 'm');
+  const durationInMinutesB = dayjs(dateToB).diff(dayjs(dateFromB), 'm');
+
+  return durationInMinutesB - durationInMinutesA;
 };
