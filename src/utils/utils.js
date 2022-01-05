@@ -41,6 +41,13 @@ export const updateItem = (items, update) => {
   ];
 };
 
+export const sortStartTimeDown = (pointA, pointB) => {
+  const {date_from: dateFromA} = pointA;
+  const {date_from: dateFromB} = pointB;
+
+  return dayjs(dateFromA).isAfter(dateFromB) ? 1 : -1;
+};
+
 export const sortTimeDown = (pointA, pointB) => {
   const {date_from: dateFromA, date_to: dateToA} = pointA;
   const {date_from: dateFromB, date_to: dateToB} = pointB;

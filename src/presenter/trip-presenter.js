@@ -1,6 +1,6 @@
 import { SortType } from '../const';
 import { RenderPosition, render } from '../utils/render';
-import { sortTimeDown, updateItem } from '../utils/utils';
+import { sortStartTimeDown, sortTimeDown, updateItem } from '../utils/utils';
 import PointsListView from '../view/site-list/site-list-view';
 import SitePointView from '../view/site-point/site-point-view';
 import SiteSortView from '../view/site-sort/site-sort-view';
@@ -22,6 +22,8 @@ export default class TripPresenter {
     points.forEach ((point) => {
       point.isFavorite = point.is_favorite;
     });
+
+    points.sort(sortStartTimeDown);
     this.#tripPoints = [...points];
     this.#sourcedTripPoints =  [...points];
     this.init();
@@ -59,6 +61,8 @@ export default class TripPresenter {
       default:
         this.#tripPoints =[...this.#sourcedTripPoints];
     }
+
+    this.#currentSortType = sortType;
   }
 
   #handleSortTypeChange = (sortType) => {
