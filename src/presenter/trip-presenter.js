@@ -1,5 +1,6 @@
 import { SortType } from '../const';
 import { RenderPosition, render } from '../utils/render';
+import { getRandomString } from '../utils/utils';
 import { sortStartTimeDown, sortTimeDown, updateItem } from '../utils/utils';
 import PointsListView from '../view/site-list/site-list-view';
 import SitePointView from '../view/site-point/site-point-view';
@@ -84,7 +85,7 @@ export default class TripPresenter {
     render(this.#tripContainer, this.#pointsListComponent, RenderPosition.BEFOREEND);
   }
 
-  #renderPoints = () => {
+  #renderPoints = (pointTypes) => {
     if (this.#tripPoints.length === 0) {
       render(this.#pointsListComponent, new SitePointView(this.#tripPoints), RenderPosition.BEFOREEND);
       return;
@@ -92,7 +93,7 @@ export default class TripPresenter {
     this.#tripPoints.forEach(
       (point) => {
         const pointPresenter = new PointPresenter(this.#pointsListComponent, this.#handlePointChange, this.#handleModeChange);
-        pointPresenter.init(point);
+        pointPresenter.init(point, pointTypes);
         this.#pointPresenter.set(point.id, pointPresenter);
       }
     );
@@ -100,6 +101,16 @@ export default class TripPresenter {
 
   #renderBoard = () => {
     this.#renderPointsList();
-    this.#renderPoints();
+
+    const offersUrl = 'https://16.ecmascript.pages.academy/big-trip/offers';
+    const fetchOptions = {
+      method: 'GET',
+      headers: {
+        'Authorization': `Basic ${getRandomString()}`,
+      },
+    };
+    fetch(offersUrl, fetchOptions)
+      .then((response) => response.json())
+      .then((pointTypes) => this.#renderPoints(pointTypes));
   }
 }

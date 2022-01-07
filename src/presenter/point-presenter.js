@@ -27,14 +27,14 @@ export default class PointPresenter {
     this.#changeMode = changeMode;
   }
 
-  init = (point) => {
+  init = (point, pointTypes) => {
     this.#point = point;
 
     const prevPointComponent = this.#pointComponent;
     const prevEditComponent = this.#pointEditComponent;
 
     this.#pointComponent = new SitePointView(point);
-    this.#pointEditComponent = new EditPointView(point);
+    this.#pointEditComponent = new EditPointView(point, pointTypes);
 
     this.#pointComponent.setOpenEditHandler(this.#handleOpenEditCLick);
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmitClick);
