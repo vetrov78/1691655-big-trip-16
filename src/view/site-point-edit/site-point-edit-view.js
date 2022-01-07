@@ -31,14 +31,26 @@ export default class EditPointView extends AbstractView {
     parent.replaceChild(newElement, prevElement);
   }
 
-  #closeClickHandler = (evt) => {
+  setChooseTypeHandler = (callback) => {
+    this._callback.chooseType = callback;
+    this.element.querySelectorAll('.event__type-input').forEach((type) => {
+      type.addEventListener('click', this.#chooseTypeHandler);
+    });
+  }
+
+  #chooseTypeHandler = (evt) => {
     evt.preventDefault();
-    this._callback.closeClick();
+    this._callback.chooseType(evt.target.id);
   }
 
   setCloseClickHandler = (callback) => {
     this._callback.closeClick = callback;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
+  }
+
+  #closeClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.closeClick();
   }
 
   setFormSubmitHandler = (callback) => {

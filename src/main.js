@@ -25,4 +25,5 @@ fetch(url, fetchOptions)
   .then((response) => response.json())
   .then((points) => {
     new TripPresenter(mainSort, points);
+    console.log(points);
   });

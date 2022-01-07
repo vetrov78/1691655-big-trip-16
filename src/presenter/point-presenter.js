@@ -39,6 +39,7 @@ export default class PointPresenter {
     this.#pointComponent.setOpenEditHandler(this.#handleOpenEditCLick);
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmitClick);
     this.#pointEditComponent.setCloseClickHandler(this.#handleCloseEditClick);
+    this.#pointEditComponent.setChooseTypeHandler(this.#handleChooseType);
     //Добавляет обработчик кликов на FAVORITE
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
 
@@ -89,6 +90,10 @@ export default class PointPresenter {
     document.removeEventListener('keydown', this.#onEscKeyDownHandler);
     this.#mode = Mode.DEFAULT;
   };
+
+  #handleChooseType = (text) => {
+    console.log(text);
+  }
 
   #handleOpenEditCLick = () => {
     this.#replacePointToEditPoint();
