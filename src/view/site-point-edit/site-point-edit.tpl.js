@@ -40,8 +40,8 @@ const createAvailableOffers = (offers) => {
           </div>`;
 };
 
-export const createEditPointTemplate = (event) => {
-  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers, type} = event;
+export const createEditPointTemplate = (data) => {
+  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers, type} = data;
 
   return `<li class="trip-events__item">
             <form class="event event--edit" action="#" method="post">
