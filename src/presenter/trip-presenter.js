@@ -92,8 +92,8 @@ export default class TripPresenter {
     }
     this.#tripPoints.forEach(
       (point) => {
-        const pointPresenter = new PointPresenter(this.#pointsListComponent, this.#handlePointChange, this.#handleModeChange);
-        pointPresenter.init(point, pointTypes);
+        const pointPresenter = new PointPresenter(this.#pointsListComponent, this.#handlePointChange, this.#handleModeChange, pointTypes);
+        pointPresenter.init(point);
         this.#pointPresenter.set(point.id, pointPresenter);
       }
     );

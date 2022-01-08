@@ -3,15 +3,17 @@ import { createEditPointTemplate } from './site-point-edit.tpl';
 
 export default class EditPointView extends AbstractView {
 
-  constructor (point) {
+  #pointTypes = null;
+
+  constructor (point, pointTypes) {
     super();
     this._data = EditPointView.parsePointToData(point);
+    this.#pointTypes = pointTypes;
   }
 
   get template() {
-    return createEditPointTemplate(this._data);
+    return createEditPointTemplate(this._data, this.#pointTypes);
   }
-
 
   updateData = (update) => {
     if (!update) {
@@ -31,16 +33,20 @@ export default class EditPointView extends AbstractView {
     parent.replaceChild(newElement, prevElement);
   }
 
-  setChooseTypeHandler = (callback) => {
-    this._callback.chooseType = callback;
-    this.element.querySelectorAll('.event__type-input').forEach((type) => {
-      type.addEventListener('click', this.#chooseTypeHandler);
+  setChooseTypeHandler = () => {
+    this.element.querySelectorAll('.event__type-input').forEach((input) => {
+      input.addEventListener('click', this.#chooseTypeHandler);
     });
   }
 
   #chooseTypeHandler = (evt) => {
     evt.preventDefault();
-    this._callback.chooseType(evt.target.id);
+
+    const chosenType = this.#pointTypes.find((el) => el.type === evt.target.value);
+    this.updateData({
+      type: chosenType.type,
+      offers: chosenType.offers,
+    });
   }
 
   setCloseClickHandler = (callback) => {

@@ -11,6 +11,7 @@ const Mode = {
 
 export default class PointPresenter {
   #point = null;
+  #pointTypes = null;
 
   #pointsListContainer = null;
   #changeData = null;
@@ -21,27 +22,28 @@ export default class PointPresenter {
 
   #mode = Mode.DEFAULT;
 
-  constructor(pointsListContainer, changeData, changeMode) {
+  constructor(pointsListContainer, changeData, changeMode, pointTypes) {
     this.#pointsListContainer = pointsListContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
+    this.#pointTypes = pointTypes;
   }
 
-  init = (point, pointTypes) => {
+  init = (point) => {
     this.#point = point;
 
     const prevPointComponent = this.#pointComponent;
     const prevEditComponent = this.#pointEditComponent;
 
     this.#pointComponent = new SitePointView(point);
-    this.#pointEditComponent = new EditPointView(point, pointTypes);
+    this.#pointEditComponent = new EditPointView(point, this.#pointTypes);
 
     this.#pointComponent.setOpenEditHandler(this.#handleOpenEditCLick);
+    this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
+
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmitClick);
     this.#pointEditComponent.setCloseClickHandler(this.#handleCloseEditClick);
-    this.#pointEditComponent.setChooseTypeHandler(this.#handleChooseType);
-    //Добавляет обработчик кликов на FAVORITE
-    this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
+    this.#pointEditComponent.setChooseTypeHandler();
 
     if (prevPointComponent === null || prevEditComponent === null) {
       render(this.#pointsListContainer, this.#pointComponent, RenderPosition.BEFOREEND);
@@ -91,9 +93,10 @@ export default class PointPresenter {
     this.#mode = Mode.DEFAULT;
   };
 
-  #handleChooseType = (text) => {
-    console.log(text);
-  }
+  // #handleChooseType = (type) => {
+  //   const chosenType = this.#pointTypes.find((el) => el.type === type);
+  //   this.#changeData({...this.#point, type: type, offers: chosenType.offers});
+  // }
 
   #handleOpenEditCLick = () => {
     this.#replacePointToEditPoint();

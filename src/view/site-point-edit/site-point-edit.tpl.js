@@ -1,14 +1,12 @@
 import dayjs from 'dayjs';
-import { ALL_TYPES_OFFERS } from '../../mock/event';
 
-const createEventTypeList = () => {
+const createEventTypeList = (pointTypes) => {
   let result = '';
 
-  ALL_TYPES_OFFERS.forEach((offer) => {
-    const typeInLowerCase = offer.type.toLowerCase();
+  pointTypes.forEach((element) => {
     result += `<div class="event__type-item">
-                <input id="event-type-${typeInLowerCase}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeInLowerCase}">
-                <label class="event__type-label  event__type-label--${typeInLowerCase}" for="event-type-${typeInLowerCase}-1">${offer.type}</label>
+                <input id="event-type-${element.type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${element.type}">
+                <label class="event__type-label  event__type-label--${element.type}" for="event-type-${element.type}-1">${element.type}</label>
               </div>`;
   });
 
@@ -40,7 +38,7 @@ const createAvailableOffers = (offers) => {
           </div>`;
 };
 
-export const createEditPointTemplate = (data) => {
+export const createEditPointTemplate = (data, pointTypes) => {
   const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers, type} = data;
 
   return `<li class="trip-events__item">
@@ -53,7 +51,7 @@ export const createEditPointTemplate = (data) => {
                   </label>
                   <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
-                  ${createEventTypeList()}
+                  ${createEventTypeList(pointTypes)}
 
                 </div>
 
