@@ -85,14 +85,14 @@ export default class TripPresenter {
     render(this.#tripContainer, this.#pointsListComponent, RenderPosition.BEFOREEND);
   }
 
-  #renderPoints = (pointTypes) => {
+  #renderPoints = (pointTypes, destinations) => {
     if (this.#tripPoints.length === 0) {
       render(this.#pointsListComponent, new SitePointView(this.#tripPoints), RenderPosition.BEFOREEND);
       return;
     }
     this.#tripPoints.forEach(
       (point) => {
-        const pointPresenter = new PointPresenter(this.#pointsListComponent, this.#handlePointChange, this.#handleModeChange, pointTypes);
+        const pointPresenter = new PointPresenter(this.#pointsListComponent, this.#handlePointChange, this.#handleModeChange, pointTypes, destinations);
         pointPresenter.init(point);
         this.#pointPresenter.set(point.id, pointPresenter);
       }
@@ -103,14 +103,17 @@ export default class TripPresenter {
     this.#renderPointsList();
 
     const offersUrl = 'https://16.ecmascript.pages.academy/big-trip/offers';
+    const destinationsUrl = 'https://16.ecmascript.pages.academy/big-trip/destinations';
     const fetchOptions = {
       method: 'GET',
       headers: {
         'Authorization': `Basic ${getRandomString()}`,
       },
     };
-    fetch(offersUrl, fetchOptions)
-      .then((response) => response.json())
-      .then((pointTypes) => this.#renderPoints(pointTypes));
+    Promise.all([
+      fetch(offersUrl, fetchOptions),
+      fetch(destinationsUrl, fetchOptions)
+    ]).then((response) => Promise.all(response.map((e) => e.json())))
+      .then(([pointTypes, destinations]) => this.#renderPoints(pointTypes, destinations));
   }
 }

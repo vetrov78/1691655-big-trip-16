@@ -93,11 +93,6 @@ export default class PointPresenter {
     this.#mode = Mode.DEFAULT;
   };
 
-  // #handleChooseType = (type) => {
-  //   const chosenType = this.#pointTypes.find((el) => el.type === type);
-  //   this.#changeData({...this.#point, type: type, offers: chosenType.offers});
-  // }
-
   #handleOpenEditCLick = () => {
     this.#replacePointToEditPoint();
   };
