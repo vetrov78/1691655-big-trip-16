@@ -14,14 +14,14 @@ const createOffersList = (offers) => {
   return result;
 };
 
-export const createSitePointTemplate = (event) => {
+export const createSitePointTemplate = (point) => {
 
-  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, is_favorite: isFavorite, offers, type} = event;
-  const datesDiff = dayjs(dateTo).diff(dayjs(dateFrom), 'm');
+  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, isFavorite: isFavorite, offers, type} = point;
+  const durationInMinutes = dayjs(dateTo).diff(dayjs(dateFrom), 'm');
 
   return `<li class="trip-events__item">
     <div class="event">
-      <time class="event__date" datetime="2019-03-18">MAR 18</time>
+      <time class="event__date" datetime="${dayjs(dateFrom)}">${dayjs(dateFrom).format('MMM D')}</time>
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
@@ -32,7 +32,7 @@ export const createSitePointTemplate = (event) => {
           &mdash;
           <time class="event__end-time" datetime="${dayjs(dateTo)}">${dayjs(dateTo).format('hh:mm')}</time>
         </p>
-        <p class="event__duration">${getDurationString(datesDiff)}</p>
+        <p class="event__duration">${getDurationString(durationInMinutes)}</p>
       </div>
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${basePrice}</span>

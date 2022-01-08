@@ -1,5 +1,6 @@
+import { SortType } from '../const';
 import { RenderPosition, render } from '../utils/render';
-import { updateItem } from '../utils/utils';
+import { sortStartTimeDown, sortTimeDown, updateItem } from '../utils/utils';
 import PointsListView from '../view/site-list/site-list-view';
 import SitePointView from '../view/site-point/site-point-view';
 import SiteSortView from '../view/site-sort/site-sort-view';
@@ -12,24 +13,30 @@ export default class TripPresenter {
 
   #tripPoints = [];
   #pointPresenter = new Map();
+  #currentSortType = SortType.DEFAULT;
   // Для сохранения начального порядка сортировки
   #sourcedTripPoints = [];
 
-  constructor(tripContainer) {
+  constructor(tripContainer, points) {
     this.#tripContainer = tripContainer;
+    points.forEach ((point) => {
+      point.isFavorite = point.is_favorite;
+    });
+
+    points.sort(sortStartTimeDown);
+    this.#tripPoints = [...points];
+    this.#sourcedTripPoints =  [...points];
+    this.init();
   }
 
-  init = (tripPoints) => {
-    this.#tripPoints = [...tripPoints];
-    this.#sourcedTripPoints = [...tripPoints];
-
+  init = () => {
     this.#renderSort();
     this.#renderBoard();
-    //console.log(tripPoints);
   }
 
   #handlePointChange = (updatedPoint) => {
     this.#tripPoints = updateItem(this.#tripPoints, updatedPoint);
+    this.#sourcedTripPoints = updateItem(this.#sourcedTripPoints, updatedPoint);
     this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
   }
 
@@ -40,10 +47,37 @@ export default class TripPresenter {
   #clearPointsList = () => {
     this.#pointPresenter.forEach((presenter) => presenter.destroy());
     this.#pointPresenter.clear();
+
+  }
+
+  #sortPoints = (sortType) => {
+    switch (sortType) {
+      case SortType.PRICE_DOWN:
+        this.#tripPoints.sort((a, b) => b.base_price - a.base_price);
+        break;
+      case SortType.TIME_DOWN:
+        this.#tripPoints.sort(sortTimeDown);
+        break;
+      default:
+        this.#tripPoints =[...this.#sourcedTripPoints];
+    }
+
+    this.#currentSortType = sortType;
+  }
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortPoints(sortType);
+    this.#clearPointsList();
+    this.#renderPoints();
   }
 
   #renderSort = () => {
     render(this.#tripContainer, this.#sortComponent, RenderPosition.BEFOREEND);
+    this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   }
 
   #renderPointsList = () => {

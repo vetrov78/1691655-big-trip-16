@@ -59,6 +59,11 @@ export default class PointPresenter {
     remove(prevEditComponent);
   }
 
+  destroy = () => {
+    remove(this.#pointComponent);
+    remove(this.#pointEditComponent);
+  }
+
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
       this.#replaceEditPointToPoint();
@@ -90,7 +95,7 @@ export default class PointPresenter {
   };
 
   #handleFavoriteClick = () => {
-    this.#changeData({...this.#point, is_favorite: !this.#point.is_favorite});
+    this.#changeData({...this.#point, isFavorite: !this.#point.isFavorite});
   };
 
   #handleCloseEditClick = () => {
