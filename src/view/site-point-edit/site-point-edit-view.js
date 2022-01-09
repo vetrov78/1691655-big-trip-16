@@ -1,7 +1,7 @@
-import AbstractView from '../abstract-view';
+import SmartView from '../smart-view';
 import { createEditPointTemplate } from './site-point-edit.tpl';
 
-export default class EditPointView extends AbstractView {
+export default class EditPointView extends SmartView {
 
   #pointTypes = null;
   #destinations = null;
@@ -19,28 +19,9 @@ export default class EditPointView extends AbstractView {
     return createEditPointTemplate(this._data, this.#pointTypes, this.#destinations);
   }
 
-  updateData = (update) => {
-    if (!update) {
-      return;
-    }
-
-    this._data = {...this._data, ...update};
-    this.updateElement();
-  }
-
-  updateElement = () => {
-    const prevElement = this.element;
-    const parent = prevElement.parentElement;
-    this.removeElement();
-
-    const newElement = this.element;
-    parent.replaceChild(newElement, prevElement);
-
-    this.#restoreHandlers();
-  }
-
-  #restoreHandlers = () => {
+  restoreHandlers = () => {
     this.#setInnerHandlers();
+    this.setCloseClickHandler(this._callback.closeClick);
     this.setFormSubmitHandler(this._callback.formSubmit);
   }
 
