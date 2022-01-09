@@ -18,6 +18,18 @@ const createEventTypeList = (pointTypes) => {
           </div>`;
 };
 
+const createDestinationsList = (availableDestinations) => {
+  let result = '';
+
+  availableDestinations.forEach((destination) => {
+    result += `<option value="${destination.name}"></option>`;
+  });
+
+  return `<datalist id="destination-list-1">
+            ${result}
+          </datalist>`;
+};
+
 const createAvailableOffers = (offers) => {
   let result = '';
 
@@ -38,7 +50,7 @@ const createAvailableOffers = (offers) => {
           </div>`;
 };
 
-export const createEditPointTemplate = (data, pointTypes) => {
+export const createEditPointTemplate = (data, pointTypes, availableDestinations) => {
   const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers, type} = data;
 
   return `<li class="trip-events__item">
@@ -59,12 +71,10 @@ export const createEditPointTemplate = (data, pointTypes) => {
                   <label class="event__label  event__type-output" for="event-destination-1">
                     ${type}
                   </label>
-                  <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination['name']}" list="destination-list-1">
-                  <datalist id="destination-list-1">
-                    <option value="Amsterdam"></option>
-                    <option value="Geneva"></option>
-                    <option value="Chamonix"></option>
-                  </datalist>
+                  <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
+
+                  ${createDestinationsList(availableDestinations)}
+
                 </div>
 
                 <div class="event__field-group  event__field-group--time">

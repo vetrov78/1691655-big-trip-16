@@ -4,15 +4,19 @@ import { createEditPointTemplate } from './site-point-edit.tpl';
 export default class EditPointView extends AbstractView {
 
   #pointTypes = null;
+  #destinations = null;
 
-  constructor (point, pointTypes) {
+  constructor (point, pointTypes, destinations) {
     super();
     this._data = EditPointView.parsePointToData(point);
     this.#pointTypes = pointTypes;
+    this.#destinations = destinations;
+
+    this.#setInnerHandlers();
   }
 
   get template() {
-    return createEditPointTemplate(this._data, this.#pointTypes);
+    return createEditPointTemplate(this._data, this.#pointTypes, this.#destinations);
   }
 
   updateData = (update) => {
@@ -31,12 +35,20 @@ export default class EditPointView extends AbstractView {
 
     const newElement = this.element;
     parent.replaceChild(newElement, prevElement);
+
+    this.#restoreHandlers();
   }
 
-  setChooseTypeHandler = () => {
+  #restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+  }
+
+  #setInnerHandlers = () => {
     this.element.querySelectorAll('.event__type-input').forEach((input) => {
       input.addEventListener('click', this.#chooseTypeHandler);
     });
+    this.element.querySelector('.event__input--destination').addEventListener('blur', this.#chooseDestinationHandler);
   }
 
   #chooseTypeHandler = (evt) => {
@@ -47,6 +59,21 @@ export default class EditPointView extends AbstractView {
       type: chosenType.type,
       offers: chosenType.offers,
     });
+  }
+
+  #chooseDestinationHandler = (evt) => {
+    evt.preventDefault();
+
+    const newDestination = this.#destinations.find((el) => el.name === evt.target.value);
+    if (newDestination) {
+      this.updateData ({
+        destination: newDestination,
+      });
+    } else {
+      this.updateData ({
+        destination: {name: evt.target.value, description: ''},
+      });
+    }
   }
 
   setCloseClickHandler = (callback) => {
