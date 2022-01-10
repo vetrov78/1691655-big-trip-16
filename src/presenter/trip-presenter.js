@@ -1,5 +1,6 @@
 import { SortType } from '../const';
 import { RenderPosition, render } from '../utils/render';
+import { getRandomString } from '../utils/utils';
 import { sortStartTimeDown, sortTimeDown, updateItem } from '../utils/utils';
 import PointsListView from '../view/site-list/site-list-view';
 import SitePointView from '../view/site-point/site-point-view';
@@ -12,6 +13,9 @@ export default class TripPresenter {
   #pointsListComponent = new PointsListView();
 
   #tripPoints = [];
+  #pointTypes = null;
+  #destinations = null;
+
   #pointPresenter = new Map();
   #currentSortType = SortType.DEFAULT;
   // Для сохранения начального порядка сортировки
@@ -53,7 +57,7 @@ export default class TripPresenter {
   #sortPoints = (sortType) => {
     switch (sortType) {
       case SortType.PRICE_DOWN:
-        this.#tripPoints.sort((a, b) => b.base_price - a.base_price);
+        this.#tripPoints.sort((a, b) => b.basePrice - a.basePrice);
         break;
       case SortType.TIME_DOWN:
         this.#tripPoints.sort(sortTimeDown);
@@ -72,7 +76,7 @@ export default class TripPresenter {
 
     this.#sortPoints(sortType);
     this.#clearPointsList();
-    this.#renderPoints();
+    this.#renderPoints(this.#pointTypes, this.#destinations);
   }
 
   #renderSort = () => {
@@ -84,14 +88,14 @@ export default class TripPresenter {
     render(this.#tripContainer, this.#pointsListComponent, RenderPosition.BEFOREEND);
   }
 
-  #renderPoints = () => {
+  #renderPoints = (pointTypes, destinations) => {
     if (this.#tripPoints.length === 0) {
       render(this.#pointsListComponent, new SitePointView(this.#tripPoints), RenderPosition.BEFOREEND);
       return;
     }
     this.#tripPoints.forEach(
       (point) => {
-        const pointPresenter = new PointPresenter(this.#pointsListComponent, this.#handlePointChange, this.#handleModeChange);
+        const pointPresenter = new PointPresenter(this.#pointsListComponent, this.#handlePointChange, this.#handleModeChange, pointTypes, destinations);
         pointPresenter.init(point);
         this.#pointPresenter.set(point.id, pointPresenter);
       }
@@ -100,6 +104,23 @@ export default class TripPresenter {
 
   #renderBoard = () => {
     this.#renderPointsList();
-    this.#renderPoints();
+
+    const offersUrl = 'https://16.ecmascript.pages.academy/big-trip/offers';
+    const destinationsUrl = 'https://16.ecmascript.pages.academy/big-trip/destinations';
+    const fetchOptions = {
+      method: 'GET',
+      headers: {
+        'Authorization': `Basic ${getRandomString()}`,
+      },
+    };
+    Promise.all([
+      fetch(offersUrl, fetchOptions),
+      fetch(destinationsUrl, fetchOptions)
+    ]).then((response) => Promise.all(response.map((e) => e.json())))
+      .then(([pointTypes, destinations]) => {
+        this.#pointTypes = pointTypes;
+        this.#destinations = destinations;
+        this.#renderPoints(pointTypes, destinations);
+      });
   }
 }

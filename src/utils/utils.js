@@ -42,15 +42,15 @@ export const updateItem = (items, update) => {
 };
 
 export const sortStartTimeDown = (pointA, pointB) => {
-  const {date_from: dateFromA} = pointA;
-  const {date_from: dateFromB} = pointB;
+  const {dateFrom: dateFromA} = pointA;
+  const {dateFrom: dateFromB} = pointB;
 
   return dayjs(dateFromA).isAfter(dateFromB) ? 1 : -1;
 };
 
 export const sortTimeDown = (pointA, pointB) => {
-  const {date_from: dateFromA, date_to: dateToA} = pointA;
-  const {date_from: dateFromB, date_to: dateToB} = pointB;
+  const {dateFrom: dateFromA, dateTo: dateToA} = pointA;
+  const {dateFrom: dateFromB, dateTo: dateToB} = pointB;
   const durationInMinutesA = dayjs(dateToA).diff(dayjs(dateFromA), 'm');
   const durationInMinutesB = dayjs(dateToB).diff(dayjs(dateFromB), 'm');
 

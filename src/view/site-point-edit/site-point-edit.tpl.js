@@ -1,14 +1,12 @@
 import dayjs from 'dayjs';
-import { ALL_TYPES_OFFERS } from '../../mock/event';
 
-const createEventTypeList = () => {
+const createEventTypeList = (pointTypes) => {
   let result = '';
 
-  ALL_TYPES_OFFERS.forEach((offer) => {
-    const typeInLowerCase = offer.type.toLowerCase();
+  pointTypes.forEach((element) => {
     result += `<div class="event__type-item">
-                <input id="event-type-${typeInLowerCase}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeInLowerCase}">
-                <label class="event__type-label  event__type-label--${typeInLowerCase}" for="event-type-${typeInLowerCase}-1">${offer.type}</label>
+                <input id="event-type-${element.type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${element.type}">
+                <label class="event__type-label  event__type-label--${element.type}" for="event-type-${element.type}-1">${element.type}</label>
               </div>`;
   });
 
@@ -18,6 +16,18 @@ const createEventTypeList = () => {
               ${result}
             </fieldset>
           </div>`;
+};
+
+const createDestinationsList = (availableDestinations) => {
+  let result = '';
+
+  availableDestinations.forEach((destination) => {
+    result += `<option value="${destination.name}"></option>`;
+  });
+
+  return `<datalist id="destination-list-1">
+            ${result}
+          </datalist>`;
 };
 
 const createAvailableOffers = (offers) => {
@@ -40,8 +50,8 @@ const createAvailableOffers = (offers) => {
           </div>`;
 };
 
-export const createEditPointTemplate = (event) => {
-  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, destination, offers, type} = event;
+export const createEditPointTemplate = (data, pointTypes, availableDestinations) => {
+  const {basePrice, dateFrom, dateTo, destination, offers, type} = data;
 
   return `<li class="trip-events__item">
             <form class="event event--edit" action="#" method="post">
@@ -53,7 +63,7 @@ export const createEditPointTemplate = (event) => {
                   </label>
                   <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
-                  ${createEventTypeList()}
+                  ${createEventTypeList(pointTypes)}
 
                 </div>
 
@@ -61,12 +71,10 @@ export const createEditPointTemplate = (event) => {
                   <label class="event__label  event__type-output" for="event-destination-1">
                     ${type}
                   </label>
-                  <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination['name']}" list="destination-list-1">
-                  <datalist id="destination-list-1">
-                    <option value="Amsterdam"></option>
-                    <option value="Geneva"></option>
-                    <option value="Chamonix"></option>
-                  </datalist>
+                  <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
+
+                  ${createDestinationsList(availableDestinations)}
+
                 </div>
 
                 <div class="event__field-group  event__field-group--time">
