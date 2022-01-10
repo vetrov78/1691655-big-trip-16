@@ -13,6 +13,9 @@ export default class TripPresenter {
   #pointsListComponent = new PointsListView();
 
   #tripPoints = [];
+  #pointTypes = null;
+  #destinations = null;
+
   #pointPresenter = new Map();
   #currentSortType = SortType.DEFAULT;
   // Для сохранения начального порядка сортировки
@@ -54,7 +57,7 @@ export default class TripPresenter {
   #sortPoints = (sortType) => {
     switch (sortType) {
       case SortType.PRICE_DOWN:
-        this.#tripPoints.sort((a, b) => b.base_price - a.base_price);
+        this.#tripPoints.sort((a, b) => b.basePrice - a.basePrice);
         break;
       case SortType.TIME_DOWN:
         this.#tripPoints.sort(sortTimeDown);
@@ -73,7 +76,7 @@ export default class TripPresenter {
 
     this.#sortPoints(sortType);
     this.#clearPointsList();
-    this.#renderPoints();
+    this.#renderPoints(this.#pointTypes, this.#destinations);
   }
 
   #renderSort = () => {
@@ -114,6 +117,10 @@ export default class TripPresenter {
       fetch(offersUrl, fetchOptions),
       fetch(destinationsUrl, fetchOptions)
     ]).then((response) => Promise.all(response.map((e) => e.json())))
-      .then(([pointTypes, destinations]) => this.#renderPoints(pointTypes, destinations));
+      .then(([pointTypes, destinations]) => {
+        this.#pointTypes = pointTypes;
+        this.#destinations = destinations;
+        this.#renderPoints(pointTypes, destinations);
+      });
   }
 }

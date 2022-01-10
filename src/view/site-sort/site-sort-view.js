@@ -13,7 +13,7 @@ export default class SiteSortView extends AbstractView {
   }
 
   #sortTypeChangeHandler = (evt) => {
-    if (evt.target.tagName !== 'INPUT') {
+    if (!evt.target.id.includes('sort')) {
       return;
     }
 
