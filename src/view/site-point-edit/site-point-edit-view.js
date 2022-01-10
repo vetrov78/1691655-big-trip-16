@@ -19,6 +19,12 @@ export default class EditPointView extends SmartView {
     return createEditPointTemplate(this._data, this.#pointTypes, this.#destinations);
   }
 
+  reset = (point) => {
+    this.updateData(
+      EditPointView.parsePointToData(point),
+    );
+  }
+
   restoreHandlers = () => {
     this.#setInnerHandlers();
     this.setCloseClickHandler(this._callback.closeClick);

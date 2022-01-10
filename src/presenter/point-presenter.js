@@ -77,6 +77,7 @@ export default class PointPresenter {
   #onEscKeyDownHandler = (evt) => {
     if (isEscPressed(evt)) {
       evt.preventDefault();
+      this.#pointEditComponent.reset(this.#point);
       this.#replaceEditPointToPoint();
     }
   };
@@ -103,6 +104,7 @@ export default class PointPresenter {
   };
 
   #handleCloseEditClick = () => {
+    this.#pointEditComponent.reset(this.#point);
     this.#replaceEditPointToPoint();
   };
 
