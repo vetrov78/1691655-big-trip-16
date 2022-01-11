@@ -1,5 +1,8 @@
 import SmartView from '../smart-view';
 import { createEditPointTemplate } from './site-point-edit.tpl';
+import flatpickr from 'flatpickr';
+
+import '../../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 export default class EditPointView extends SmartView {
 
