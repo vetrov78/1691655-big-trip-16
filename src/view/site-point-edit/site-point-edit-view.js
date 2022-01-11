@@ -5,6 +5,7 @@ import flatpickr from 'flatpickr';
 import '../../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 export default class EditPointView extends SmartView {
+  #datepicker = null;
 
   #pointTypes = null;
   #destinations = null;
@@ -16,10 +17,21 @@ export default class EditPointView extends SmartView {
     this.#destinations = destinations;
 
     this.#setInnerHandlers();
+    this.#setStartDatepicker();
+    this.#setEndDatepicker();
   }
 
   get template() {
     return createEditPointTemplate(this._data, this.#pointTypes, this.#destinations);
+  }
+
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#datepicker) {
+      this.#datepicker.destroy();
+      this.#datepicker = null;
+    }
   }
 
   reset = (point) => {
@@ -30,9 +42,46 @@ export default class EditPointView extends SmartView {
 
   restoreHandlers = () => {
     this.#setInnerHandlers();
+    this.#setStartDatepicker();
+    this.#setEndDatepicker();
     this.setCloseClickHandler(this._callback.closeClick);
     this.setFormSubmitHandler(this._callback.formSubmit);
   }
+
+  #setStartDatepicker = () => {
+    this.#datepicker = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        onClose: this.#startDatepickerCloseHandler,
+      },
+    );
+  }
+
+  #startDatepickerCloseHandler = (selectedDates) => {
+    this.updateData({
+      dateFrom: selectedDates,
+    });
+  }
+
+  #setEndDatepicker = () => {
+    this.#datepicker = flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        onClose: this.#endDatepickerCloseHandler,
+      },
+    );
+  }
+
+  #endDatepickerCloseHandler = (selectedDates) => {
+    this.updateData({
+      dateTo: selectedDates,
+    });
+  }
+
 
   #setInnerHandlers = () => {
     this.element.querySelectorAll('.event__type-input').forEach((input) => {

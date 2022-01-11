@@ -10,10 +10,8 @@
     "start": "webpack serve --open --mode development"
   },
   "devDependencies": {
-    "css-loader": "^6.5.1",
     "eslint": "7.32.0",
-    "eslint-config-htmlacademy": "5.0.0",
-    "style-loader": "^3.3.1"
+    "eslint-config-htmlacademy": "5.0.0"
   },
   "engines": {
     "node": "16"
@@ -27,8 +25,10 @@
     "D": "^1.0.0",
     "babel-loader": "8.2.3",
     "camelcase-keys": "^7.0.1",
+    "css-loader": "^6.5.1",
     "dayjs": "^1.10.7",
     "flatpickr": "^4.6.9",
+    "style-loader": "^3.3.1",
     "webpack": "5.62.1",
     "webpack-cli": "4.9.1",
     "webpack-dev-server": "4.4.0"
