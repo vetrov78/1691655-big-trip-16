@@ -1,7 +1,13 @@
 import SmartView from '../smart-view';
 import { createEditPointTemplate } from './site-point-edit.tpl';
+import flatpickr from 'flatpickr';
+import { checkDatesOrder } from '../../utils/utils';
+
+import '../../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 export default class EditPointView extends SmartView {
+  #startDatepicker = null;
+  #endDatepicker = null;
 
   #pointTypes = null;
   #destinations = null;
@@ -13,16 +19,83 @@ export default class EditPointView extends SmartView {
     this.#destinations = destinations;
 
     this.#setInnerHandlers();
+    this.#setStartDatepicker();
+    this.#setEndDatepicker();
   }
 
   get template() {
     return createEditPointTemplate(this._data, this.#pointTypes, this.#destinations);
   }
 
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#startDatepicker) {
+      this.#startDatepicker.destroy();
+      this.#startDatepicker = null;
+    }
+    if (this.#endDatepicker) {
+      this.#endDatepicker.destroy();
+      this.#endDatepicker = null;
+    }
+  }
+
+  reset = (point) => {
+    this.updateData(
+      EditPointView.parsePointToData(point),
+    );
+  }
+
   restoreHandlers = () => {
     this.#setInnerHandlers();
+    this.#setStartDatepicker();
+    this.#setEndDatepicker();
     this.setCloseClickHandler(this._callback.closeClick);
     this.setFormSubmitHandler(this._callback.formSubmit);
+  }
+
+  #setStartDatepicker = () => {
+    this.#startDatepicker = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        onClose: this.#startDatepickerCloseHandler,
+      },
+    );
+  }
+
+  #startDatepickerCloseHandler = (selectedDates) => {
+    if (checkDatesOrder(selectedDates, this.#endDatepicker.selectedDates)) {
+      this.updateData({
+        dateFrom: selectedDates,
+      });
+      return;
+    }
+    this.#startDatepicker.setDate(this._data.dateFromo);
+    //alert ('Дата начала должна быть меньше даты окончания');
+  }
+
+  #setEndDatepicker = () => {
+    this.#endDatepicker = flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        onClose: this.#endDatepickerCloseHandler,
+      },
+    );
+  }
+
+  #endDatepickerCloseHandler = (selectedDates) => {
+    if (checkDatesOrder(this.#startDatepicker.selectedDates, selectedDates)) {
+      this.updateData({
+        dateTo: selectedDates,
+      });
+      return;
+    }
+    this.#endDatepicker.setDate(this._data.dateTo);
+    //alert ('Дата окончания должна быть больше даты начала');
   }
 
   #setInnerHandlers = () => {

@@ -56,3 +56,5 @@ export const sortTimeDown = (pointA, pointB) => {
 
   return durationInMinutesB - durationInMinutesA;
 };
+
+export const checkDatesOrder = (startDate, endDate) => dayjs(startDate).isBefore(endDate);
