@@ -1,11 +1,13 @@
 import SmartView from '../smart-view';
 import { createEditPointTemplate } from './site-point-edit.tpl';
 import flatpickr from 'flatpickr';
+import { checkDatesOrder } from '../../utils/utils';
 
 import '../../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 export default class EditPointView extends SmartView {
-  #datepicker = null;
+  #startDatepicker = null;
+  #endDatepicker = null;
 
   #pointTypes = null;
   #destinations = null;
@@ -28,9 +30,13 @@ export default class EditPointView extends SmartView {
   removeElement = () => {
     super.removeElement();
 
-    if (this.#datepicker) {
-      this.#datepicker.destroy();
-      this.#datepicker = null;
+    if (this.#startDatepicker) {
+      this.#startDatepicker.destroy();
+      this.#startDatepicker = null;
+    }
+    if (this.#endDatepicker) {
+      this.#endDatepicker.destroy();
+      this.#endDatepicker = null;
     }
   }
 
@@ -49,7 +55,7 @@ export default class EditPointView extends SmartView {
   }
 
   #setStartDatepicker = () => {
-    this.#datepicker = flatpickr(
+    this.#startDatepicker = flatpickr(
       this.element.querySelector('#event-start-time-1'),
       {
         enableTime: true,
@@ -60,13 +66,18 @@ export default class EditPointView extends SmartView {
   }
 
   #startDatepickerCloseHandler = (selectedDates) => {
-    this.updateData({
-      dateFrom: selectedDates,
-    });
+    if (checkDatesOrder(selectedDates, this.#endDatepicker.selectedDates)) {
+      this.updateData({
+        dateFrom: selectedDates,
+      });
+      return;
+    }
+    this.#startDatepicker.setDate(this._data.dateFromo);
+    //alert ('Дата начала должна быть меньше даты окончания');
   }
 
   #setEndDatepicker = () => {
-    this.#datepicker = flatpickr(
+    this.#endDatepicker = flatpickr(
       this.element.querySelector('#event-end-time-1'),
       {
         enableTime: true,
@@ -77,11 +88,15 @@ export default class EditPointView extends SmartView {
   }
 
   #endDatepickerCloseHandler = (selectedDates) => {
-    this.updateData({
-      dateTo: selectedDates,
-    });
+    if (checkDatesOrder(this.#startDatepicker.selectedDates, selectedDates)) {
+      this.updateData({
+        dateTo: selectedDates,
+      });
+      return;
+    }
+    this.#endDatepicker.setDate(this._data.dateTo);
+    //alert ('Дата окончания должна быть больше даты начала');
   }
-
 
   #setInnerHandlers = () => {
     this.element.querySelectorAll('.event__type-input').forEach((input) => {

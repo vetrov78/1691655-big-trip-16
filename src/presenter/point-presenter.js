@@ -23,22 +23,24 @@ export default class PointPresenter {
 
   #mode = Mode.DEFAULT;
 
-  constructor(pointsListContainer, changeData, changeMode, pointTypes, destinations) {
+  constructor(point, pointsListContainer, changeData, changeMode, pointTypes, destinations) {
+    this.#point = point;
+
     this.#pointsListContainer = pointsListContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
     this.#pointTypes = pointTypes;
     this.#destinations = destinations;
+
+    this.init();
   }
 
-  init = (point) => {
-    this.#point = point;
-
+  init = () => {
     const prevPointComponent = this.#pointComponent;
     const prevEditComponent = this.#pointEditComponent;
 
-    this.#pointComponent = new SitePointView(point);
-    this.#pointEditComponent = new EditPointView(point, this.#pointTypes, this.#destinations);
+    this.#pointComponent = new SitePointView(this.#point);
+    this.#pointEditComponent = new EditPointView(this.#point, this.#pointTypes, this.#destinations);
 
     this.#pointComponent.setOpenEditHandler(this.#handleOpenEditCLick);
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
