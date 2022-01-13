@@ -3,7 +3,7 @@ import { createEditPointTemplate } from './site-point-edit.tpl';
 import flatpickr from 'flatpickr';
 import { checkDatesOrder } from '../../utils/utils';
 
-import '../../../node_modules/flatpickr/dist/flatpickr.min.css';
+import 'flatpickr/dist/flatpickr.min.css';
 
 export default class EditPointView extends SmartView {
   #startDatepicker = null;
@@ -44,6 +44,13 @@ export default class EditPointView extends SmartView {
     this.updateData(
       EditPointView.parsePointToData(point),
     );
+  }
+
+  #setInnerHandlers = () => {
+    this.element.querySelectorAll('.event__type-input').forEach((input) => {
+      input.addEventListener('click', this.#chooseTypeHandler);
+    });
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#chooseDestinationHandler);
   }
 
   restoreHandlers = () => {
@@ -98,13 +105,6 @@ export default class EditPointView extends SmartView {
     //alert ('Дата окончания должна быть больше даты начала');
   }
 
-  #setInnerHandlers = () => {
-    this.element.querySelectorAll('.event__type-input').forEach((input) => {
-      input.addEventListener('click', this.#chooseTypeHandler);
-    });
-    this.element.querySelector('.event__input--destination').addEventListener('blur', this.#chooseDestinationHandler);
-  }
-
   #chooseTypeHandler = (evt) => {
     evt.preventDefault();
 
@@ -123,11 +123,12 @@ export default class EditPointView extends SmartView {
       this.updateData ({
         destination: newDestination,
       });
+      evt.target.setCustomValidity('');
     } else {
-      this.updateData ({
-        destination: {name: evt.target.value, description: ''},
-      });
+      evt.target.setCustomValidity('Выберите пункт назначения из списка');
     }
+
+    evt.target.reportValidity();
   }
 
   setCloseClickHandler = (callback) => {
