@@ -3,6 +3,7 @@ import EditPointView from '../view/site-point-edit/site-point-edit-view';
 
 import { isEscPressed } from '../utils/utils';
 import { RenderPosition, render, replace, remove } from '../utils/render';
+import { UpdateType, UserAction } from '../const';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -101,16 +102,26 @@ export default class PointPresenter {
     this.#replacePointToEditPoint();
   };
 
-  #handleFavoriteClick = () => {
-    this.#changeData({...this.#point, isFavorite: !this.#point.isFavorite});
-  };
-
   #handleCloseEditClick = () => {
     this.#pointEditComponent.reset(this.#point);
     this.#replaceEditPointToPoint();
   };
 
-  #handleFormSubmitClick = () => {
+  #handleFavoriteClick = () => {
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
+      {...this.#point, isFavorite: !this.#point.isFavorite},
+    );
+  };
+
+  #handleFormSubmitClick = (point) => {
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MAJOR,
+      point,
+    );
+
     this.#replaceEditPointToPoint();
   };
 }

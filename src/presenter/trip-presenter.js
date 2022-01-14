@@ -1,7 +1,7 @@
 import { SortType } from '../const';
 import { RenderPosition, render } from '../utils/render';
 import { getRandomString } from '../utils/utils';
-import { sortStartTimeDown, sortTimeDown, updateItem } from '../utils/utils';
+import { sortStartTimeDown, sortTimeDown } from '../utils/utils';
 import PointsListView from '../view/site-list/site-list-view';
 import SitePointView from '../view/site-point/site-point-view';
 import SiteSortView from '../view/site-sort/site-sort-view';
@@ -9,6 +9,10 @@ import PointPresenter from './point-presenter';
 
 export default class TripPresenter {
   #tripContainer = null;
+
+  //Создаем модель данных
+  #pointsModel = null;
+
   #sortComponent = new SiteSortView();
   #pointsListComponent = new PointsListView();
 
@@ -18,19 +22,28 @@ export default class TripPresenter {
 
   #pointPresenter = new Map();
   #currentSortType = SortType.DEFAULT;
-  // Для сохранения начального порядка сортировки
-  #sourcedTripPoints = [];
 
-  constructor(tripContainer, points) {
+  constructor(tripContainer, pointsModel) {
     this.#tripContainer = tripContainer;
-    points.forEach ((point) => {
-      point.isFavorite = point.is_favorite;
-    });
 
-    points.sort(sortStartTimeDown);
-    this.#tripPoints = [...points];
-    this.#sourcedTripPoints =  [...points];
+    //инициализируем модель
+    this.#pointsModel = pointsModel;
+
+    this.#pointsModel.addObserver(this.#handleModelEvent);
+
+    this.#pointsModel.points.sort(sortStartTimeDown);
     this.init();
+  }
+
+  //возвращает отсортированный список точек
+  get points() {
+    switch (this.#currentSortType) {
+      case SortType.PRICE_DOWN:
+        return [...this.#pointsModel.points].sort((a, b) => b.basePrice - a.basePrice);
+      case SortType.TIME_DOWN:
+        return [...this.#pointsModel.points].sort(sortTimeDown);
+    }
+    return this.#pointsModel.points;
   }
 
   init = () => {
@@ -38,11 +51,14 @@ export default class TripPresenter {
     this.#renderBoard();
   }
 
-  #handlePointChange = (updatedPoint) => {
-    this.#tripPoints = updateItem(this.#tripPoints, updatedPoint);
-    this.#sourcedTripPoints = updateItem(this.#sourcedTripPoints, updatedPoint);
-    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
+  #handleViewAction = (actionType, updateType, update) => {
+    console.log(actionType, updateType, update);
+    //
   }
+
+  #handleModelEvent = (updateType, data) => {
+    console.log(updateType, data);
+  };
 
   #handleModeChange = () => {
     this.#pointPresenter.forEach((presenter) => presenter.resetView());
@@ -54,27 +70,12 @@ export default class TripPresenter {
 
   }
 
-  #sortPoints = (sortType) => {
-    switch (sortType) {
-      case SortType.PRICE_DOWN:
-        this.#tripPoints.sort((a, b) => b.basePrice - a.basePrice);
-        break;
-      case SortType.TIME_DOWN:
-        this.#tripPoints.sort(sortTimeDown);
-        break;
-      default:
-        this.#tripPoints =[...this.#sourcedTripPoints];
-    }
-
-    this.#currentSortType = sortType;
-  }
-
   #handleSortTypeChange = (sortType) => {
     if (this.#currentSortType === sortType) {
       return;
     }
 
-    this.#sortPoints(sortType);
+    this.#currentSortType = sortType;
     this.#clearPointsList();
     this.#renderPoints(this.#pointTypes, this.#destinations);
   }
@@ -89,13 +90,13 @@ export default class TripPresenter {
   }
 
   #renderPoints = (pointTypes, destinations) => {
-    if (this.#tripPoints.length === 0) {
+    if (this.#pointsModel.points.length === 0) {
       render(this.#pointsListComponent, new SitePointView(this.#tripPoints), RenderPosition.BEFOREEND);
       return;
     }
-    this.#tripPoints.forEach(
+    this.points.forEach(
       (point) => {
-        const pointPresenter = new PointPresenter(point, this.#pointsListComponent, this.#handlePointChange, this.#handleModeChange, pointTypes, destinations);
+        const pointPresenter = new PointPresenter(point, this.#pointsListComponent, this.#handleViewAction, this.#handleModeChange, pointTypes, destinations);
         this.#pointPresenter.set(point.id, pointPresenter);
       }
     );
