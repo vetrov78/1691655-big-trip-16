@@ -4,6 +4,7 @@ import flatpickr from 'flatpickr';
 import { checkDatesOrder } from '../../utils/utils';
 
 import 'flatpickr/dist/flatpickr.min.css';
+import PointsListView from '../site-list/site-list-view';
 
 export default class EditPointView extends SmartView {
   #startDatepicker = null;
@@ -59,6 +60,7 @@ export default class EditPointView extends SmartView {
     this.#setEndDatepicker();
     this.setCloseClickHandler(this._callback.closeClick);
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setFormDeleteClickHandler(this._callback.deleteClick);
   }
 
   #setStartDatepicker = () => {
@@ -150,6 +152,16 @@ export default class EditPointView extends SmartView {
     evt.preventDefault();
     this._callback.formSubmit(EditPointView.parseDataToPoint(this._data));
   }
+
+  setFormDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('form').addEventListener('reset', this.#deleteHandler);
+  };
+
+  #deleteHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick(EditPointView.parseDataToPoint(this._data));
+  };
 
   static parsePointToData = (point) => ({
     ...point,
