@@ -1,7 +1,7 @@
 import { getDurationString } from '../../utils/utils';
 import dayjs from 'dayjs';
 
-const createOffersList = (offers) => {
+const createChoosenOffersList = (offers) => {
   let result = '';
   for (const offer of offers) {
     result += `<li class="event__offer">
@@ -40,7 +40,7 @@ export const createSitePointTemplate = (point) => {
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
 
-        ${createOffersList(offers)}
+        ${createChoosenOffersList(offers)}
 
       </ul>
       <button class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ''}" type="button">
@@ -55,7 +55,3 @@ export const createSitePointTemplate = (point) => {
     </div>
   </li>`;
 };
-
-export const createEmptyTemplate = () => (
-  '<p class="trip-events__msg">Click New Event to create your first point</p>'
-);

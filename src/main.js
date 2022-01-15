@@ -31,5 +31,8 @@ fetch(pointsUrl, fetchOptions)
     const pointsModel = new PointsModel();
     pointsModel.points = camelcaseKeys(points);
     new TripPresenter(mainSort, pointsModel);
+
+    console.log(points);
+
   });
 

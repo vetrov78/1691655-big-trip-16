@@ -66,8 +66,6 @@ export default class TripPresenter {
 
   #handleModelEvent = (updateType, data) => {
 
-    console.log(updateType);
-
     switch (updateType) {
       case UpdateType.PATCH:
         this.#pointPresenter.get(data.id).init(data);
@@ -147,6 +145,8 @@ export default class TripPresenter {
     ]).then((response) => Promise.all(response.map((e) => e.json())))
       .then(([pointTypes, destinations]) => {
       //**************
+
+      console.log(pointTypes);
 
         const pointsLength = this.points.length;
         if (pointsLength === 0) {

@@ -30,14 +30,16 @@ const createDestinationsList = (availableDestinations) => {
           </datalist>`;
 };
 
-const createAvailableOffers = (offers) => {
+const createOffers = (pointType, choosenOffers) => {
   let result = '';
 
-  offers.forEach((offer) => {
-    const checked = (offer.checked) ? 'checked' : '';
+  pointType.offers.forEach((offer) => {
+    const isChecked = choosenOffers.some((element) => element.id === offer.id);
+
+    const checked = isChecked ? 'checked' : '';
     result += `<div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}" type="checkbox" name="event-offer-luggage" ${checked}>
-    <label class="event__offer-label" for="event-offer-${offer.id}">
+    <input class="event__offer-checkbox visually-hidden" id="event-offer-${pointType.type}-${offer.id}" type="checkbox" name="event-offer-${pointType.type}" ${checked}>
+    <label class="event__offer-label" for="event-offer-${pointType.type}-${offer.id}">
       <span class="event__offer-title">${offer.title}</span>
       &plus;&euro;&nbsp;
       <span class="event__offer-price">${offer.price}</span>
@@ -50,8 +52,10 @@ const createAvailableOffers = (offers) => {
           </div>`;
 };
 
-export const createEditPointTemplate = (data, pointTypes, availableDestinations) => {
-  const {basePrice, dateFrom, dateTo, destination, offers, type} = data;
+export const createEditPointTemplate = (data, pointTypes, destinations) => {
+  const {basePrice, dateFrom, dateTo, destination, offers: choosenOffers, type} = data;
+
+  const pointType = pointTypes.find((element) => element.type === type);
 
   return `<li class="trip-events__item">
             <form class="event event--edit" action="#" method="post">
@@ -73,7 +77,7 @@ export const createEditPointTemplate = (data, pointTypes, availableDestinations)
                   </label>
                   <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
 
-                  ${createDestinationsList(availableDestinations)}
+                  ${createDestinationsList(destinations)}
 
                 </div>
 
@@ -103,7 +107,7 @@ export const createEditPointTemplate = (data, pointTypes, availableDestinations)
                 <section class="event__section  event__section--offers">
                   <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
-                  ${createAvailableOffers(offers)}
+                  ${createOffers(pointType, choosenOffers)}
 
                 </section>
 
