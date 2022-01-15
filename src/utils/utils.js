@@ -44,3 +44,5 @@ export const sortTimeDown = (pointA, pointB) => {
 };
 
 export const checkDatesOrder = (startDate, endDate) => dayjs(startDate).isBefore(endDate);
+
+export const isDatesEqualInMinutes = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'm');

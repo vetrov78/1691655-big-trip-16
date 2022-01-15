@@ -81,7 +81,7 @@ export default class EditPointView extends SmartView {
       });
       return;
     }
-    this.#startDatepicker.setDate(this._data.dateFromo);
+    this.#startDatepicker.setDate(this._data.dateFrom);
     //alert ('Дата начала должна быть меньше даты окончания');
   }
 

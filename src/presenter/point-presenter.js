@@ -1,9 +1,11 @@
 import SitePointView from '../view/site-point/site-point-view';
 import EditPointView from '../view/site-point-edit/site-point-edit-view';
 
-import { isEscPressed } from '../utils/utils';
+import { isEscPressed, isDatesEqualInMinutes } from '../utils/utils';
 import { RenderPosition, render, replace, remove } from '../utils/render';
 import { UpdateType, UserAction } from '../const';
+
+import dayjs from 'dayjs';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -25,18 +27,18 @@ export default class PointPresenter {
   #mode = Mode.DEFAULT;
 
   constructor(point, pointsListContainer, changeData, changeMode, pointTypes, destinations) {
-    this.#point = point;
-
     this.#pointsListContainer = pointsListContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
     this.#pointTypes = pointTypes;
     this.#destinations = destinations;
 
-    this.init();
+    this.init(point);
   }
 
-  init = () => {
+  init = (point) => {
+    this.#point = point;
+
     const prevPointComponent = this.#pointComponent;
     const prevEditComponent = this.#pointEditComponent;
 
@@ -116,19 +118,19 @@ export default class PointPresenter {
     );
   };
 
-  #handleFormSubmitClick = (point) => {
+  #handleFormSubmitClick = (update) => {
+    const isAnyDateChanged = !(isDatesEqualInMinutes(update.dateTo, this.#point.dateTo) && isDatesEqualInMinutes(update.dateFrom, this.#point.dateFrom));
+
     this.#changeData(
       UserAction.UPDATE_POINT,
-      UpdateType.MAJOR,
-      point,
+      isAnyDateChanged ? UpdateType.MINOR : UpdateType.PATCH,
+      update,
     );
 
     this.#replaceEditPointToPoint();
   };
 
   #handleFormDeleteClick = (point) => {
-    console.log(point);
-
     this.#changeData(
       UserAction.DELETE_POINT,
       UpdateType.MINOR,
