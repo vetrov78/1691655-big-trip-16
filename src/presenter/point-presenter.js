@@ -5,8 +5,6 @@ import { isEscPressed, isDatesEqualInMinutes } from '../utils/utils';
 import { RenderPosition, render, replace, remove } from '../utils/render';
 import { UpdateType, UserAction } from '../const';
 
-import dayjs from 'dayjs';
-
 const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING'

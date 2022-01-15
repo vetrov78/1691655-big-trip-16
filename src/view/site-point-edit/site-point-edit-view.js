@@ -4,7 +4,6 @@ import flatpickr from 'flatpickr';
 import { checkDatesOrder } from '../../utils/utils';
 
 import 'flatpickr/dist/flatpickr.min.css';
-import PointsListView from '../site-list/site-list-view';
 
 export default class EditPointView extends SmartView {
   #startDatepicker = null;
@@ -47,12 +46,6 @@ export default class EditPointView extends SmartView {
     );
   }
 
-  #setInnerHandlers = () => {
-    this.element.querySelectorAll('.event__type-input').forEach((input) => {
-      input.addEventListener('click', this.#chooseTypeHandler);
-    });
-    this.element.querySelector('.event__input--destination').addEventListener('change', this.#chooseDestinationHandler);
-  }
 
   restoreHandlers = () => {
     this.#setInnerHandlers();
@@ -62,6 +55,49 @@ export default class EditPointView extends SmartView {
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFormDeleteClickHandler(this._callback.deleteClick);
   }
+
+  #setInnerHandlers = () => {
+    this.element.querySelectorAll('.event__type-input').forEach((input) => {
+      input.addEventListener('click', this.#chooseTypeHandler);
+    });
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#chooseDestinationHandler);
+    this.element.querySelectorAll('.event__offer-checkbox').forEach((input) => {
+      input.addEventListener('change', this.#changeOfferHandler);
+    });
+  }
+
+  #chooseTypeHandler = (evt) => {
+    evt.preventDefault();
+
+    const chosenType = this.#pointTypes.find((el) => el.type === evt.target.value);
+    this.updateData({
+      type: chosenType.type,
+      offers: chosenType.offers,
+    });
+  }
+
+  #chooseDestinationHandler = (evt) => {
+    evt.preventDefault();
+
+    const newDestination = this.#destinations.find((el) => el.name === evt.target.value);
+    if (newDestination) {
+      this.updateData ({
+        destination: newDestination,
+      });
+      evt.target.setCustomValidity('');
+    } else {
+      evt.target.setCustomValidity('Выберите пункт назначения из списка');
+    }
+
+    evt.target.reportValidity();
+  }
+
+  #changeOfferHandler = (evt) => {
+    evt.preventDefault();
+
+    console.log(point.offers);
+
+  };
 
   #setStartDatepicker = () => {
     this.#startDatepicker = flatpickr(
@@ -107,31 +143,6 @@ export default class EditPointView extends SmartView {
     //alert ('Дата окончания должна быть больше даты начала');
   }
 
-  #chooseTypeHandler = (evt) => {
-    evt.preventDefault();
-
-    const chosenType = this.#pointTypes.find((el) => el.type === evt.target.value);
-    this.updateData({
-      type: chosenType.type,
-      offers: chosenType.offers,
-    });
-  }
-
-  #chooseDestinationHandler = (evt) => {
-    evt.preventDefault();
-
-    const newDestination = this.#destinations.find((el) => el.name === evt.target.value);
-    if (newDestination) {
-      this.updateData ({
-        destination: newDestination,
-      });
-      evt.target.setCustomValidity('');
-    } else {
-      evt.target.setCustomValidity('Выберите пункт назначения из списка');
-    }
-
-    evt.target.reportValidity();
-  }
 
   setCloseClickHandler = (callback) => {
     this._callback.closeClick = callback;
