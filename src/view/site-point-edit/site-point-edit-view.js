@@ -182,6 +182,9 @@ export default class EditPointView extends SmartView {
     this._callback.deleteClick(EditPointView.parseDataToPoint(this._data));
   };
 
+  // без глубокого копирования при выборе дополнительных опций в форме редактирования
+  // изменяются данные в модели без сохранения
+
   static parsePointToData = (point) => _.cloneDeep(point)
 
   static parseDataToPoint = (data) => ({
