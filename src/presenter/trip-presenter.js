@@ -1,16 +1,17 @@
-import { SortType, UpdateType, UserAction } from '../const';
+import { FilterType, SortType, UpdateType, UserAction } from '../const';
 import { RenderPosition, render, remove } from '../utils/render';
 import { getRandomString } from '../utils/utils';
 import { sortStartTimeDown, sortTimeDown } from '../utils/utils';
+import { filter } from '../utils/filter';
+
 import PointsListView from '../view/site-list/site-list-view';
-import SitePointView from '../view/site-point/site-point-view';
 import SiteSortView from '../view/site-sort/site-sort-view';
 import PointPresenter from './point-presenter';
 
 export default class TripPresenter {
   #tripContainer = null;
-  //Создаем модель данных
   #pointsModel = null;
+  #filtersModel = null;
 
   #sortComponent = null;
   #pointsListComponent = new PointsListView();
@@ -21,14 +22,16 @@ export default class TripPresenter {
 
   #pointPresenter = new Map();
   #currentSortType = SortType.DEFAULT;
+  #filterType = FilterType.EVERYTHING;
 
-  constructor(tripContainer, pointsModel) {
+  constructor(tripContainer, pointsModel, filtersModel) {
     this.#tripContainer = tripContainer;
 
-    //инициализируем модель
     this.#pointsModel = pointsModel;
+    this.#filtersModel = filtersModel;
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filtersModel.addObserver(this.#handleModelEvent);
 
     this.#pointsModel.points.sort(sortStartTimeDown);
     this.init();
@@ -36,13 +39,17 @@ export default class TripPresenter {
 
   //возвращает отсортированный список точек
   get points() {
+    this.#filterType = this.#filtersModel.filter;
+    const points = this.#pointsModel.points;
+    const filteredPoints = filter[this.#filterType](points);
+
     switch (this.#currentSortType) {
       case SortType.PRICE_DOWN:
-        return [...this.#pointsModel.points].sort((a, b) => b.basePrice - a.basePrice);
+        return filteredPoints.sort((a, b) => b.basePrice - a.basePrice);
       case SortType.TIME_DOWN:
-        return [...this.#pointsModel.points].sort(sortTimeDown);
+        return filteredPoints.sort(sortTimeDown);
     }
-    return this.#pointsModel.points;
+    return filteredPoints;
   }
 
   init = () => {
@@ -65,7 +72,6 @@ export default class TripPresenter {
   }
 
   #handleModelEvent = (updateType, data) => {
-
     switch (updateType) {
       case UpdateType.PATCH:
         this.#pointPresenter.get(data.id).init(data);

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import SmartView from '../smart-view';
 import { createEditPointTemplate } from './site-point-edit.tpl';
 import flatpickr from 'flatpickr';
@@ -6,6 +7,7 @@ import { checkDatesOrder } from '../../utils/utils';
 import 'flatpickr/dist/flatpickr.min.css';
 
 export default class EditPointView extends SmartView {
+  #chosenType = null;
   #startDatepicker = null;
   #endDatepicker = null;
 
@@ -14,6 +16,7 @@ export default class EditPointView extends SmartView {
 
   constructor (point, pointTypes, destinations) {
     super();
+    this.#chosenType = pointTypes.find((el) => el.type === point.type);
     this._data = EditPointView.parsePointToData(point);
     this.#pointTypes = pointTypes;
     this.#destinations = destinations;
@@ -69,10 +72,10 @@ export default class EditPointView extends SmartView {
   #chooseTypeHandler = (evt) => {
     evt.preventDefault();
 
-    const chosenType = this.#pointTypes.find((el) => el.type === evt.target.value);
+    this.#chosenType = this.#pointTypes.find((el) => el.type === evt.target.value);
     this.updateData({
-      type: chosenType.type,
-      offers: chosenType.offers,
+      type: this.#chosenType.type,
+      offers: [],
     });
   }
 
@@ -95,8 +98,13 @@ export default class EditPointView extends SmartView {
   #changeOfferHandler = (evt) => {
     evt.preventDefault();
 
-    console.log(point.offers);
-
+    const changedOfferId = Number(evt.target.id.slice(-1));
+    const changedOffer = this.#chosenType.offers.find((offer) => offer.id === changedOfferId);
+    if (evt.target.checked) {
+      this._data.offers.push(changedOffer);
+    } else {
+      this._data.offers = this._data.offers.filter((offer) => offer.id !== changedOfferId);
+    }
   };
 
   #setStartDatepicker = () => {
@@ -174,9 +182,10 @@ export default class EditPointView extends SmartView {
     this._callback.deleteClick(EditPointView.parseDataToPoint(this._data));
   };
 
-  static parsePointToData = (point) => ({
-    ...point,
-  })
+  // без глубокого копирования при выборе дополнительных опций в форме редактирования
+  // изменяются данные в модели без сохранения
+
+  static parsePointToData = (point) => _.cloneDeep(point)
 
   static parseDataToPoint = (data) => ({
     ...data,
