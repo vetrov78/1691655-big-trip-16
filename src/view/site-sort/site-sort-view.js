@@ -1,10 +1,17 @@
 import { createSiteSortTemplate } from './site-sort.tpl';
-
 import AbstractView from '../abstract-view';
 
 export default class SiteSortView extends AbstractView {
+  #sortType = null;
+
+  constructor(sortType) {
+    super();
+    this.#sortType = sortType;
+  }
+
   get template() {
-    return createSiteSortTemplate();
+    console.log(this.#sortType);
+    return createSiteSortTemplate(this.#sortType);
   }
 
   setSortTypeChangeHandler = (callback) => {

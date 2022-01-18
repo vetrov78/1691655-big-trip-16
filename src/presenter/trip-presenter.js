@@ -1,12 +1,12 @@
 import { FilterType, SortType, UpdateType, UserAction } from '../const';
 import { RenderPosition, render, remove } from '../utils/render';
-import { getRandomString } from '../utils/utils';
 import { sortStartTimeDown, sortTimeDown } from '../utils/utils';
 import { filter } from '../utils/filter';
 
 import PointsListView from '../view/site-list/site-list-view';
 import SiteSortView from '../view/site-sort/site-sort-view';
 import PointPresenter from './point-presenter';
+import SiteNoPointView from '../view/site-no-point/site-no-point-view';
 
 export default class TripPresenter {
   #tripContainer = null;
@@ -15,7 +15,7 @@ export default class TripPresenter {
 
   #sortComponent = null;
   #pointsListComponent = new PointsListView();
-  #noPointsComponent = null; //new NoPointsView();
+  #noPointsComponent = null;
 
   #pointTypes = null;
   #destinations = null;
@@ -24,11 +24,13 @@ export default class TripPresenter {
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.EVERYTHING;
 
-  constructor(tripContainer, pointsModel, filtersModel) {
+  constructor(tripContainer, pointsModel, filtersModel, pointTypes, destinations) {
     this.#tripContainer = tripContainer;
 
     this.#pointsModel = pointsModel;
     this.#filtersModel = filtersModel;
+    this.#pointTypes = pointTypes;
+    this.#destinations = destinations;
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filtersModel.addObserver(this.#handleModelEvent);
@@ -56,7 +58,6 @@ export default class TripPresenter {
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filtersModel.addObserver(this.#handleModelEvent);
 
-    this.#renderSort();
     this.#renderBoard();
   }
 
@@ -80,8 +81,8 @@ export default class TripPresenter {
         this.#pointPresenter.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
-        this.#clearPoints();
-        this.#renderPoints(this.#pointTypes, this.#destinations);
+        this.#clearBoard();
+        this.#renderBoard();
         break;
     }
   };
@@ -94,10 +95,16 @@ export default class TripPresenter {
     render(this.#tripContainer, this.#pointsListComponent, RenderPosition.BEFOREEND);
   }
 
-  #clearPoints = ({resetSortType = false} = {}) => {
+  #clearBoard = ({resetSortType = false} = {}) => {
     this.#pointPresenter.forEach((presenter) => presenter.destroy());
     this.#pointPresenter.clear();
-    remove(this.#noPointsComponent);
+
+    remove(this.#sortComponent);
+    remove(this.#pointsListComponent);
+
+    if (this.#noPointsComponent) {
+      remove(this.#noPointsComponent);
+    }
 
     if (resetSortType) {
       this.#currentSortType = SortType.DEFAULT;
@@ -109,18 +116,19 @@ export default class TripPresenter {
       return;
     }
     this.#currentSortType = sortType;
-    this.#clearPoints();
+    this.#clearBoard();
     this.#renderBoard();
   }
 
   #renderSort = () => {
-    this.#sortComponent = new SiteSortView();
+    this.#sortComponent = new SiteSortView(this.#currentSortType);
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
-    render(this.#tripContainer, this.#sortComponent, RenderPosition.AFTERBEGIN);
+    render(this.#tripContainer, this.#sortComponent, RenderPosition.BEFOREEND);
   }
 
   #renderNoPoints = () => {
-    render(this.#pointsListComponent, this.#noPointsComponent, RenderPosition.AFTERBEGIN);
+    this.#noPointsComponent = new SiteNoPointView(this.#filterType).element;
+    render(this.#tripContainer, this.#noPointsComponent, RenderPosition.AFTERBEGIN);
   };
 
   #renderPoints = (pointTypes, destinations) => {
@@ -133,33 +141,14 @@ export default class TripPresenter {
   }
 
   #renderBoard = () => {
+    const pointsLength = this.points.length;
+
+    if (pointsLength === 0) {
+      this.#renderNoPoints(this.#filterType);
+      return;
+    }
+    this.#renderSort();
     this.#renderPointsList();
-
-    // Убрать в отдельный модуль
-    const offersUrl = 'https://16.ecmascript.pages.academy/big-trip/offers';
-    const destinationsUrl = 'https://16.ecmascript.pages.academy/big-trip/destinations';
-    const fetchOptions = {
-      method: 'GET',
-      headers: {
-        'Authorization': `Basic ${getRandomString()}`,
-      },
-    };
-    Promise.all([
-      fetch(offersUrl, fetchOptions),
-      fetch(destinationsUrl, fetchOptions)
-    ]).then((response) => Promise.all(response.map((e) => e.json())))
-      .then(([pointTypes, destinations]) => {
-      //**************
-
-        const pointsLength = this.points.length;
-        if (pointsLength === 0) {
-          this.#renderNoPoints();
-          return;
-        }
-
-        this.#pointTypes = pointTypes;
-        this.#destinations = destinations;
-        this.#renderPoints(pointTypes, destinations);
-      });
+    this.#renderPoints(this.#pointTypes, this.#destinations);
   }
 }

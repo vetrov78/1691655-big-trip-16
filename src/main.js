@@ -30,9 +30,19 @@ fetch(pointsUrl, fetchOptions)
     const filterModel = new FilterModel();
 
     const pointsModel = new PointsModel();
-    pointsModel.points = camelcaseKeys(points);
+    pointsModel.points = camelcaseKeys(points.slice(0, 5));
 
     new FilterPresenter(controlsFilters, filterModel, pointsModel);
-    new TripPresenter(mainSort, pointsModel, filterModel);
 
+    // Убрать в отдельный модуль
+    const offersUrl = 'https://16.ecmascript.pages.academy/big-trip/offers';
+    const destinationsUrl = 'https://16.ecmascript.pages.academy/big-trip/destinations';
+
+    Promise.all([
+      fetch(offersUrl, fetchOptions),
+      fetch(destinationsUrl, fetchOptions)
+    ]).then((response) => Promise.all(response.map((e) => e.json())))
+      .then(([pointTypes, destinations]) => {
+        new TripPresenter(mainSort, pointsModel, filterModel, pointTypes, destinations);
+      });
   });
