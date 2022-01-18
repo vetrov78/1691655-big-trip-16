@@ -118,10 +118,11 @@ export default class PointPresenter {
 
   #handleFormSubmitClick = (update) => {
     const isAnyDateChanged = !(isDatesEqualInMinutes(update.dateTo, this.#point.dateTo) && isDatesEqualInMinutes(update.dateFrom, this.#point.dateFrom));
+    const isPriceChanged = (this.#point.price === update.price);
 
     this.#changeData(
       UserAction.UPDATE_POINT,
-      isAnyDateChanged ? UpdateType.MINOR : UpdateType.PATCH,
+      (isAnyDateChanged || isPriceChanged) ? UpdateType.MINOR : UpdateType.PATCH,
       update,
     );
 

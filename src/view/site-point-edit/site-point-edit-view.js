@@ -67,6 +67,14 @@ export default class EditPointView extends SmartView {
     this.element.querySelectorAll('.event__offer-checkbox').forEach((input) => {
       input.addEventListener('change', this.#changeOfferHandler);
     });
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#changePriceHandler);
+  }
+
+  #changePriceHandler = (evt) => {
+    evt.preventDefault();
+    this.updateData({
+      basePrice: evt.target.value,
+    });
   }
 
   #chooseTypeHandler = (evt) => {
@@ -151,7 +159,6 @@ export default class EditPointView extends SmartView {
     //alert ('Дата окончания должна быть больше даты начала');
   }
 
-
   setCloseClickHandler = (callback) => {
     this._callback.closeClick = callback;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
@@ -181,9 +188,6 @@ export default class EditPointView extends SmartView {
     evt.preventDefault();
     this._callback.deleteClick(EditPointView.parseDataToPoint(this._data));
   };
-
-  // без глубокого копирования при выборе дополнительных опций в форме редактирования
-  // изменяются данные в модели без сохранения
 
   static parsePointToData = (point) => _.cloneDeep(point)
 

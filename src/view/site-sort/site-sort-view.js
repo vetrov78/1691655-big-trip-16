@@ -16,7 +16,6 @@ export default class SiteSortView extends AbstractView {
     if (!evt.target.id.includes('sort')) {
       return;
     }
-
     this._callback.sortTypeChange(evt.target.dataset.sortType);
   }
 }

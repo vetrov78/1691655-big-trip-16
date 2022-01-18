@@ -49,10 +49,13 @@ export default class TripPresenter {
       case SortType.TIME_DOWN:
         return filteredPoints.sort(sortTimeDown);
     }
-    return filteredPoints;
+    return filteredPoints.sort(sortStartTimeDown);
   }
 
   init = () => {
+    this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filtersModel.addObserver(this.#handleModelEvent);
+
     this.#renderSort();
     this.#renderBoard();
   }
@@ -80,9 +83,6 @@ export default class TripPresenter {
         this.#clearPoints();
         this.#renderPoints(this.#pointTypes, this.#destinations);
         break;
-      case UpdateType.MAJOR:
-        // обновить весь презентер
-        break;
     }
   };
 
@@ -108,7 +108,6 @@ export default class TripPresenter {
     if (this.#currentSortType === sortType) {
       return;
     }
-
     this.#currentSortType = sortType;
     this.#clearPoints();
     this.#renderBoard();
@@ -151,8 +150,6 @@ export default class TripPresenter {
     ]).then((response) => Promise.all(response.map((e) => e.json())))
       .then(([pointTypes, destinations]) => {
       //**************
-
-      console.log(pointTypes);
 
         const pointsLength = this.points.length;
         if (pointsLength === 0) {
