@@ -1,10 +1,16 @@
 import { createSiteSortTemplate } from './site-sort.tpl';
-
 import AbstractView from '../abstract-view';
 
 export default class SiteSortView extends AbstractView {
+  #sortType = null;
+
+  constructor(sortType) {
+    super();
+    this.#sortType = sortType;
+  }
+
   get template() {
-    return createSiteSortTemplate();
+    return createSiteSortTemplate(this.#sortType);
   }
 
   setSortTypeChangeHandler = (callback) => {
@@ -16,7 +22,6 @@ export default class SiteSortView extends AbstractView {
     if (!evt.target.id.includes('sort')) {
       return;
     }
-
     this._callback.sortTypeChange(evt.target.dataset.sortType);
   }
 }

@@ -1,8 +1,9 @@
 import SitePointView from '../view/site-point/site-point-view';
 import EditPointView from '../view/site-point-edit/site-point-edit-view';
 
-import { isEscPressed } from '../utils/utils';
+import { isEscPressed, isDatesEqualInMinutes } from '../utils/utils';
 import { RenderPosition, render, replace, remove } from '../utils/render';
+import { UpdateType, UserAction } from '../const';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -24,29 +25,30 @@ export default class PointPresenter {
   #mode = Mode.DEFAULT;
 
   constructor(point, pointsListContainer, changeData, changeMode, pointTypes, destinations) {
-    this.#point = point;
-
     this.#pointsListContainer = pointsListContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
     this.#pointTypes = pointTypes;
     this.#destinations = destinations;
 
-    this.init();
+    this.init(point);
   }
 
-  init = () => {
+  init = (point) => {
+    this.#point = point;
+
     const prevPointComponent = this.#pointComponent;
     const prevEditComponent = this.#pointEditComponent;
 
     this.#pointComponent = new SitePointView(this.#point);
-    this.#pointEditComponent = new EditPointView(this.#point, this.#pointTypes, this.#destinations);
+    this.#pointEditComponent = new EditPointView(this.#pointTypes, this.#destinations, this.#point);
 
     this.#pointComponent.setOpenEditHandler(this.#handleOpenEditCLick);
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
 
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmitClick);
     this.#pointEditComponent.setCloseClickHandler(this.#handleCloseEditClick);
+    this.#pointEditComponent.setFormDeleteClickHandler(this.#handleFormDeleteClick);
 
     if (prevPointComponent === null || prevEditComponent === null) {
       render(this.#pointsListContainer, this.#pointComponent, RenderPosition.BEFOREEND);
@@ -101,16 +103,37 @@ export default class PointPresenter {
     this.#replacePointToEditPoint();
   };
 
-  #handleFavoriteClick = () => {
-    this.#changeData({...this.#point, isFavorite: !this.#point.isFavorite});
-  };
-
   #handleCloseEditClick = () => {
     this.#pointEditComponent.reset(this.#point);
     this.#replaceEditPointToPoint();
   };
 
-  #handleFormSubmitClick = () => {
+  #handleFavoriteClick = () => {
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
+      {...this.#point, isFavorite: !this.#point.isFavorite},
+    );
+  };
+
+  #handleFormSubmitClick = (update) => {
+    const isAnyDateChanged = !(isDatesEqualInMinutes(update.dateTo, this.#point.dateTo) && isDatesEqualInMinutes(update.dateFrom, this.#point.dateFrom));
+    const isPriceChanged = (this.#point.price === update.price);
+
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      (isAnyDateChanged || isPriceChanged) ? UpdateType.MINOR : UpdateType.PATCH,
+      update,
+    );
+
     this.#replaceEditPointToPoint();
+  };
+
+  #handleFormDeleteClick = (point) => {
+    this.#changeData(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point
+    );
   };
 }

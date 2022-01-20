@@ -1,5 +1,5 @@
 import AbstractView from '../abstract-view';
-import { createSitePointTemplate, createEmptyTemplate } from './site-point.tpl';
+import { createSitePointTemplate } from './site-point.tpl';
 
 export default class SitePointView extends AbstractView {
   #point = null;
@@ -10,11 +10,7 @@ export default class SitePointView extends AbstractView {
   }
 
   get template() {
-    if (this.#point.length !== 0) {
-      return createSitePointTemplate(this.#point);
-    }
-
-    return createEmptyTemplate();
+    return createSitePointTemplate(this.#point);
   }
 
   #openClickHandler = (evt) => {

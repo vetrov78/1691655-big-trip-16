@@ -1,125 +1,167 @@
-import { SortType } from '../const';
-import { RenderPosition, render } from '../utils/render';
-import { getRandomString } from '../utils/utils';
-import { sortStartTimeDown, sortTimeDown, updateItem } from '../utils/utils';
+import { FilterType, SortType, UpdateType, UserAction } from '../const';
+import { RenderPosition, render, remove } from '../utils/render';
+import { sortStartTimeDown, sortTimeDown } from '../utils/utils';
+import { filter } from '../utils/filter';
+
 import PointsListView from '../view/site-list/site-list-view';
-import SitePointView from '../view/site-point/site-point-view';
 import SiteSortView from '../view/site-sort/site-sort-view';
 import PointPresenter from './point-presenter';
+import SiteNoPointView from '../view/site-no-point/site-no-point-view';
+import PointNewPresenter from './point-new-presenter';
 
 export default class TripPresenter {
   #tripContainer = null;
-  #sortComponent = new SiteSortView();
-  #pointsListComponent = new PointsListView();
+  #pointsModel = null;
+  #filtersModel = null;
 
-  #tripPoints = [];
+  #sortComponent = null;
+  #pointsListComponent = new PointsListView();
+  #noPointsComponent = null;
+
   #pointTypes = null;
   #destinations = null;
 
   #pointPresenter = new Map();
+  #pointNewPresenter = null;
+
   #currentSortType = SortType.DEFAULT;
-  // Для сохранения начального порядка сортировки
-  #sourcedTripPoints = [];
+  #filterType = FilterType.EVERYTHING;
 
-  constructor(tripContainer, points) {
+  constructor(tripContainer, pointsModel, filtersModel, pointTypes, destinations) {
     this.#tripContainer = tripContainer;
-    points.forEach ((point) => {
-      point.isFavorite = point.is_favorite;
-    });
 
-    points.sort(sortStartTimeDown);
-    this.#tripPoints = [...points];
-    this.#sourcedTripPoints =  [...points];
+    this.#pointsModel = pointsModel;
+    this.#filtersModel = filtersModel;
+
+    this.#pointTypes = pointTypes;
+    this.#destinations = destinations;
+
+    this.#pointNewPresenter = new PointNewPresenter(this.#pointsListComponent, this.#handleViewAction, this.#pointTypes, this.#destinations);
+
+    this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filtersModel.addObserver(this.#handleModelEvent);
+
+    this.#pointsModel.points.sort(sortStartTimeDown);
     this.init();
   }
 
+  //возвращает отсортированный список точек
+  get points() {
+    this.#filterType = this.#filtersModel.filter;
+    const points = this.#pointsModel.points;
+    const filteredPoints = filter[this.#filterType](points);
+
+    switch (this.#currentSortType) {
+      case SortType.PRICE_DOWN:
+        return filteredPoints.sort((a, b) => b.basePrice - a.basePrice);
+      case SortType.TIME_DOWN:
+        return filteredPoints.sort(sortTimeDown);
+    }
+    return filteredPoints.sort(sortStartTimeDown);
+  }
+
   init = () => {
-    this.#renderSort();
+    this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filtersModel.addObserver(this.#handleModelEvent);
+
     this.#renderBoard();
   }
 
-  #handlePointChange = (updatedPoint) => {
-    this.#tripPoints = updateItem(this.#tripPoints, updatedPoint);
-    this.#sourcedTripPoints = updateItem(this.#sourcedTripPoints, updatedPoint);
-    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
+  createPoint = () => {
+    this.#currentSortType = SortType.DEFAULT;
+    this.#filtersModel.setFilter(UpdateType.MINOR, FilterType.EVERYTHING);
+    this.#pointNewPresenter.init();
   }
+
+  #handleViewAction = (actionType, updateType, update) => {
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        this.#pointsModel.updatePoint(updateType, update);
+        break;
+      case UserAction.DELETE_POINT:
+        this.#pointsModel.deletePoint(updateType, update);
+        break;
+      case UserAction.ADD_POINT:
+        this.#pointsModel.addPoint(updateType, update);
+        break;
+    }
+  }
+
+  #handleModelEvent = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#pointPresenter.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        this.#clearBoard();
+        this.#renderBoard();
+        break;
+    }
+  };
 
   #handleModeChange = () => {
+    this.#pointNewPresenter.destroy();
     this.#pointPresenter.forEach((presenter) => presenter.resetView());
-  }
-
-  #clearPointsList = () => {
-    this.#pointPresenter.forEach((presenter) => presenter.destroy());
-    this.#pointPresenter.clear();
-
-  }
-
-  #sortPoints = (sortType) => {
-    switch (sortType) {
-      case SortType.PRICE_DOWN:
-        this.#tripPoints.sort((a, b) => b.basePrice - a.basePrice);
-        break;
-      case SortType.TIME_DOWN:
-        this.#tripPoints.sort(sortTimeDown);
-        break;
-      default:
-        this.#tripPoints =[...this.#sourcedTripPoints];
-    }
-
-    this.#currentSortType = sortType;
-  }
-
-  #handleSortTypeChange = (sortType) => {
-    if (this.#currentSortType === sortType) {
-      return;
-    }
-
-    this.#sortPoints(sortType);
-    this.#clearPointsList();
-    this.#renderPoints(this.#pointTypes, this.#destinations);
-  }
-
-  #renderSort = () => {
-    render(this.#tripContainer, this.#sortComponent, RenderPosition.BEFOREEND);
-    this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   }
 
   #renderPointsList = () => {
     render(this.#tripContainer, this.#pointsListComponent, RenderPosition.BEFOREEND);
   }
 
-  #renderPoints = (pointTypes, destinations) => {
-    if (this.#tripPoints.length === 0) {
-      render(this.#pointsListComponent, new SitePointView(this.#tripPoints), RenderPosition.BEFOREEND);
+  #clearBoard = ({resetSortType = false} = {}) => {
+    this.#pointPresenter.forEach((presenter) => presenter.destroy());
+    this.#pointPresenter.clear();
+
+    remove(this.#sortComponent);
+    remove(this.#pointsListComponent);
+
+    if (this.#noPointsComponent) {
+      remove(this.#noPointsComponent);
+    }
+
+    if (resetSortType) {
+      this.#currentSortType = SortType.DEFAULT;
+    }
+  }
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
       return;
     }
-    this.#tripPoints.forEach(
+    this.#currentSortType = sortType;
+    this.#clearBoard();
+    this.#renderBoard();
+  }
+
+  #renderSort = () => {
+    this.#sortComponent = new SiteSortView(this.#currentSortType);
+    this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
+    render(this.#tripContainer, this.#sortComponent, RenderPosition.BEFOREEND);
+  }
+
+  #renderNoPoints = () => {
+    this.#noPointsComponent = new SiteNoPointView(this.#filterType).element;
+    render(this.#tripContainer, this.#noPointsComponent, RenderPosition.AFTERBEGIN);
+  };
+
+  #renderPoints = (pointTypes, destinations) => {
+    this.points.forEach(
       (point) => {
-        const pointPresenter = new PointPresenter(point, this.#pointsListComponent, this.#handlePointChange, this.#handleModeChange, pointTypes, destinations);
+        const pointPresenter = new PointPresenter(point, this.#pointsListComponent, this.#handleViewAction, this.#handleModeChange, pointTypes, destinations);
         this.#pointPresenter.set(point.id, pointPresenter);
       }
     );
   }
 
   #renderBoard = () => {
-    this.#renderPointsList();
+    const pointsLength = this.points.length;
 
-    const offersUrl = 'https://16.ecmascript.pages.academy/big-trip/offers';
-    const destinationsUrl = 'https://16.ecmascript.pages.academy/big-trip/destinations';
-    const fetchOptions = {
-      method: 'GET',
-      headers: {
-        'Authorization': `Basic ${getRandomString()}`,
-      },
-    };
-    Promise.all([
-      fetch(offersUrl, fetchOptions),
-      fetch(destinationsUrl, fetchOptions)
-    ]).then((response) => Promise.all(response.map((e) => e.json())))
-      .then(([pointTypes, destinations]) => {
-        this.#pointTypes = pointTypes;
-        this.#destinations = destinations;
-        this.#renderPoints(pointTypes, destinations);
-      });
+    if (pointsLength === 0) {
+      this.#renderNoPoints(this.#filterType);
+      return;
+    }
+    this.#renderSort();
+    this.#renderPointsList();
+    this.#renderPoints(this.#pointTypes, this.#destinations);
   }
 }

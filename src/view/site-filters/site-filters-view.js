@@ -2,7 +2,24 @@ import AbstractView from '../abstract-view';
 import { createSiteFiltersTemplate } from './site-filters.tpl';
 
 export default class SiteFilterView extends AbstractView {
-  get template() {
-    return createSiteFiltersTemplate();
+  #currentFilter = null;
+
+  constructor(currentFilter) {
+    super();
+    this.#currentFilter = currentFilter;
   }
+
+  get template() {
+    return createSiteFiltersTemplate(this.#currentFilter);
+  }
+
+  setFilterTypeChangeHandler = (callback) => {
+    this._callback.filterTypeChange = callback;
+    this.element.addEventListener('change', this.#filterTypeChangeHandler);
+  }
+
+  #filterTypeChangeHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.filterTypeChange(evt.target.value);
+  };
 }

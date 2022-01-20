@@ -27,20 +27,6 @@ export const getDurationString = (durationInMinutes) => {
 
 export const isEscPressed = (evt) => (evt.key === 'Escape' || evt.key === 'Esc');
 
-export const updateItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
-
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    update,
-    ...items.slice(index + 1),
-  ];
-};
-
 export const sortStartTimeDown = (pointA, pointB) => {
   const {dateFrom: dateFromA} = pointA;
   const {dateFrom: dateFromB} = pointB;
@@ -58,3 +44,5 @@ export const sortTimeDown = (pointA, pointB) => {
 };
 
 export const checkDatesOrder = (startDate, endDate) => dayjs(startDate).isBefore(endDate);
+
+export const isDatesEqualInMinutes = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'm');
