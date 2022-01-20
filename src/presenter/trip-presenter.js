@@ -7,6 +7,7 @@ import PointsListView from '../view/site-list/site-list-view';
 import SiteSortView from '../view/site-sort/site-sort-view';
 import PointPresenter from './point-presenter';
 import SiteNoPointView from '../view/site-no-point/site-no-point-view';
+import PointNewPresenter from './point-new-presenter';
 
 export default class TripPresenter {
   #tripContainer = null;
@@ -21,6 +22,8 @@ export default class TripPresenter {
   #destinations = null;
 
   #pointPresenter = new Map();
+  #pointNewPresenter = null;
+
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.EVERYTHING;
 
@@ -29,8 +32,11 @@ export default class TripPresenter {
 
     this.#pointsModel = pointsModel;
     this.#filtersModel = filtersModel;
+
     this.#pointTypes = pointTypes;
     this.#destinations = destinations;
+
+    this.#pointNewPresenter = new PointNewPresenter(this.#pointsListComponent, this.#handleViewAction, this.#pointTypes, this.#destinations);
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filtersModel.addObserver(this.#handleModelEvent);
@@ -61,6 +67,12 @@ export default class TripPresenter {
     this.#renderBoard();
   }
 
+  createPoint = () => {
+    this.#currentSortType = SortType.DEFAULT;
+    this.#filtersModel.setFilter(UpdateType.MINOR, FilterType.EVERYTHING);
+    this.#pointNewPresenter.init();
+  }
+
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
@@ -88,6 +100,7 @@ export default class TripPresenter {
   };
 
   #handleModeChange = () => {
+    this.#pointNewPresenter.destroy();
     this.#pointPresenter.forEach((presenter) => presenter.resetView());
   }
 

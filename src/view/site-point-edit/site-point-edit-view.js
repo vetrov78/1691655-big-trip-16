@@ -5,6 +5,21 @@ import flatpickr from 'flatpickr';
 import { checkDatesOrder } from '../../utils/utils';
 
 import 'flatpickr/dist/flatpickr.min.css';
+import dayjs from 'dayjs';
+
+const BLANK_POINT = {
+  basePrice: 0,
+  dateFrom: dayjs(),
+  dateTo: dayjs(),
+  destination: {
+    name: '',
+    description: '',
+    pictures: [],
+  },
+  isFavorite: false,
+  offers: [],
+  type: 'taxi',
+};
 
 export default class EditPointView extends SmartView {
   #chosenType = null;
@@ -14,7 +29,7 @@ export default class EditPointView extends SmartView {
   #pointTypes = null;
   #destinations = null;
 
-  constructor (point, pointTypes, destinations) {
+  constructor (pointTypes, destinations,point = BLANK_POINT) {
     super();
     this.#chosenType = pointTypes.find((el) => el.type === point.type);
     this._data = EditPointView.parsePointToData(point);
@@ -49,7 +64,6 @@ export default class EditPointView extends SmartView {
     );
   }
 
-
   restoreHandlers = () => {
     this.#setInnerHandlers();
     this.#setStartDatepicker();
@@ -67,11 +81,13 @@ export default class EditPointView extends SmartView {
     this.element.querySelectorAll('.event__offer-checkbox').forEach((input) => {
       input.addEventListener('change', this.#changeOfferHandler);
     });
+    this.element.querySelector('.event__input--price').setAttribute('type', 'number');
     this.element.querySelector('.event__input--price').addEventListener('change', this.#changePriceHandler);
   }
 
   #changePriceHandler = (evt) => {
     evt.preventDefault();
+
     this.updateData({
       basePrice: evt.target.value,
     });

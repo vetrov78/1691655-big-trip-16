@@ -26,11 +26,9 @@ const fetchOptions = {
 fetch(pointsUrl, fetchOptions)
   .then((response) => response.json())
   .then((points) => {
-
     const filterModel = new FilterModel();
-
     const pointsModel = new PointsModel();
-    pointsModel.points = camelcaseKeys(points.slice(0, 5));
+    pointsModel.points = camelcaseKeys(points);
 
     new FilterPresenter(controlsFilters, filterModel, pointsModel);
 
@@ -38,11 +36,23 @@ fetch(pointsUrl, fetchOptions)
     const offersUrl = 'https://16.ecmascript.pages.academy/big-trip/offers';
     const destinationsUrl = 'https://16.ecmascript.pages.academy/big-trip/destinations';
 
-    Promise.all([
-      fetch(offersUrl, fetchOptions),
-      fetch(destinationsUrl, fetchOptions)
-    ]).then((response) => Promise.all(response.map((e) => e.json())))
-      .then(([pointTypes, destinations]) => {
-        new TripPresenter(mainSort, pointsModel, filterModel, pointTypes, destinations);
-      });
+    Promise
+      .all([
+        fetch(offersUrl, fetchOptions),
+        fetch(destinationsUrl, fetchOptions)
+      ])
+      .then(
+        (response) => Promise.all(response.map((e) => e.json()))
+      )
+      .then(
+        ([pointTypes, destinations]) => {
+          const tripPresenter = new TripPresenter(mainSort, pointsModel, filterModel, pointTypes, destinations);
+          document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+            evt.preventDefault();
+            tripPresenter.createPoint();
+          });
+        }
+      );
   });
+
+
