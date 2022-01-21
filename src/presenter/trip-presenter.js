@@ -67,10 +67,10 @@ export default class TripPresenter {
     this.#renderBoard();
   }
 
-  createPoint = () => {
+  createPoint = (callback) => {
     this.#currentSortType = SortType.DEFAULT;
     this.#filtersModel.setFilter(UpdateType.MINOR, FilterType.EVERYTHING);
-    this.#pointNewPresenter.init();
+    this.#pointNewPresenter.init(callback);
   }
 
   #handleViewAction = (actionType, updateType, update) => {

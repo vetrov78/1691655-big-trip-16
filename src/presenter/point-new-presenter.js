@@ -11,6 +11,8 @@ export default class PointNewPresenter {
   #changeData = null;
   #pointEditComponent = null;
 
+  #destroyCallback = null;
+
   constructor(pointsListContainer, changeData, pointTypes, destinations) {
     this.#pointTypes = pointTypes;
     this.#destinations = destinations;
@@ -19,8 +21,11 @@ export default class PointNewPresenter {
     this.#changeData = changeData;
   }
 
-  init = () => {
+  init = (callback) => {
+    this.#destroyCallback = callback;
+
     if (this.#pointEditComponent !== null) {
+      alert('previous presenter is alive');
       return;
     }
 
@@ -37,6 +42,8 @@ export default class PointNewPresenter {
     if (this.#pointEditComponent === null) {
       return;
     }
+
+    this.#destroyCallback?.();
 
     remove(this.#pointEditComponent);
     this.#pointEditComponent = null;

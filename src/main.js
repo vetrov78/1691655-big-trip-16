@@ -40,7 +40,6 @@ fetch(pointsUrl, fetchOptions)
     };
     siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
 
-
     render(controlsNavigation, siteMenuComponent, RenderPosition.BEFOREEND);
 
     const filterModel = new FilterModel();
@@ -64,9 +63,16 @@ fetch(pointsUrl, fetchOptions)
       .then(
         ([pointTypes, destinations]) => {
           const tripPresenter = new TripPresenter(mainSort, pointsModel, filterModel, pointTypes, destinations);
+
+          const handleNewPointFormClose = () => {
+            alert('handleNewPointFormClose');
+            document.querySelector('.trip-main__event-add-btn').setAttribute('disabled', 'enabled');
+          };
+
           document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
             evt.preventDefault();
-            tripPresenter.createPoint();
+            evt.target.setAttribute('disabled', 'disabled');
+            tripPresenter.createPoint(handleNewPointFormClose);
           });
         }
       );
