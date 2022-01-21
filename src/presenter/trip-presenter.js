@@ -38,9 +38,6 @@ export default class TripPresenter {
 
     this.#pointNewPresenter = new PointNewPresenter(this.#pointsListComponent, this.#handleViewAction, this.#pointTypes, this.#destinations);
 
-    this.#pointsModel.addObserver(this.#handleModelEvent);
-    this.#filtersModel.addObserver(this.#handleModelEvent);
-
     this.#pointsModel.points.sort(sortStartTimeDown);
     this.init();
   }
@@ -67,8 +64,16 @@ export default class TripPresenter {
     this.#renderBoard();
   }
 
+  destroy = () => {
+    this.#clearBoard({resetSortType: true});
+
+    remove(this.#pointsListComponent);
+
+    this.#pointsModel.removeObserver(this.#handleModelEvent);
+    this.#filtersModel.removeObserver(this.#handleModelEvent);
+  }
+
   createPoint = (callback) => {
-    this.#currentSortType = SortType.DEFAULT;
     this.#filtersModel.setFilter(UpdateType.MINOR, FilterType.EVERYTHING);
     this.#pointNewPresenter.init(callback);
   }

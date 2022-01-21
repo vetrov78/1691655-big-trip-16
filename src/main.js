@@ -1,6 +1,6 @@
 import camelcaseKeys from 'camelcase-keys';
 import { getRandomString } from './utils/utils';
-import { render, RenderPosition } from './utils/render';
+import { disableChildren, enableChildren, render, RenderPosition } from './utils/render';
 import { MenuItem } from './const';
 
 import SiteMenuView from './view/site-menu/site-menu-view';
@@ -15,6 +15,8 @@ const controlsFilters = document.querySelector('.trip-controls__filters');
 const mainSort = document.querySelector('.trip-events');
 
 const pointsUrl = 'https://16.ecmascript.pages.academy/big-trip/points';
+const offersUrl = 'https://16.ecmascript.pages.academy/big-trip/offers';
+const destinationsUrl = 'https://16.ecmascript.pages.academy/big-trip/destinations';
 const fetchOptions = {
   method: 'GET',
   headers: {
@@ -22,9 +24,14 @@ const fetchOptions = {
   },
 };
 
-fetch(pointsUrl, fetchOptions)
-  .then((response) => response.json())
-  .then((points) => {
+Promise
+  .all([
+    fetch(pointsUrl, fetchOptions),
+    fetch(offersUrl, fetchOptions),
+    fetch(destinationsUrl, fetchOptions)
+  ])
+  .then((response) => Promise.all(response.map((e) => e.json())))
+  .then(([points, pointTypes, destinations]) => {
 
     // show menu
 
@@ -48,34 +55,24 @@ fetch(pointsUrl, fetchOptions)
 
     new FilterPresenter(controlsFilters, filterModel, pointsModel);
 
-    // Убрать в отдельный модуль
-    const offersUrl = 'https://16.ecmascript.pages.academy/big-trip/offers';
-    const destinationsUrl = 'https://16.ecmascript.pages.academy/big-trip/destinations';
+    const tripPresenter = new TripPresenter(mainSort, pointsModel, filterModel, pointTypes, destinations);
 
-    Promise
-      .all([
-        fetch(offersUrl, fetchOptions),
-        fetch(destinationsUrl, fetchOptions)
-      ])
-      .then(
-        (response) => Promise.all(response.map((e) => e.json()))
-      )
-      .then(
-        ([pointTypes, destinations]) => {
-          const tripPresenter = new TripPresenter(mainSort, pointsModel, filterModel, pointTypes, destinations);
+    const handleNewPointFormClose = () => {
+      document.querySelector('.trip-main__event-add-btn').disabled = false;
 
-          const handleNewPointFormClose = () => {
-            alert('handleNewPointFormClose');
-            document.querySelector('.trip-main__event-add-btn').setAttribute('disabled', 'enabled');
-          };
+      enableChildren(document.querySelector('.trip-main__trip-controls'));
+      enableChildren(document.querySelector('.trip-events__trip-sort'));
+    };
 
-          document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
-            evt.preventDefault();
-            evt.target.setAttribute('disabled', 'disabled');
-            tripPresenter.createPoint(handleNewPointFormClose);
-          });
-        }
-      );
+    document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+      evt.preventDefault();
+      evt.target.disabled = true;
+
+      tripPresenter.createPoint(handleNewPointFormClose);
+
+      disableChildren(document.querySelector('.trip-main__trip-controls'));
+      disableChildren(document.querySelector('.trip-events__trip-sort'));
+    });
   });
 
 
