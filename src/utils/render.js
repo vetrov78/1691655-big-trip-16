@@ -64,3 +64,13 @@ export const remove = (component) => {
   component.element.remove();
   component.removeElement();
 };
+
+export const disableChildren = (component) => {
+  const nodes = component.querySelectorAll('*');
+
+  nodes.forEach((node) => {
+
+    node.disabled = true;
+    console.log(node);
+  });
+};

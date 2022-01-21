@@ -1,6 +1,6 @@
 import camelcaseKeys from 'camelcase-keys';
 import { getRandomString } from './utils/utils';
-import { render, RenderPosition } from './utils/render';
+import { disableChildren, render, RenderPosition } from './utils/render';
 import { MenuItem } from './const';
 
 import SiteMenuView from './view/site-menu/site-menu-view';
@@ -15,6 +15,8 @@ const controlsFilters = document.querySelector('.trip-controls__filters');
 const mainSort = document.querySelector('.trip-events');
 
 const pointsUrl = 'https://16.ecmascript.pages.academy/big-trip/points';
+const offersUrl = 'https://16.ecmascript.pages.academy/big-trip/offers';
+const destinationsUrl = 'https://16.ecmascript.pages.academy/big-trip/destinations';
 const fetchOptions = {
   method: 'GET',
   headers: {
@@ -22,9 +24,14 @@ const fetchOptions = {
   },
 };
 
-fetch(pointsUrl, fetchOptions)
-  .then((response) => response.json())
-  .then((points) => {
+Promise
+      .all([
+        fetch(pointsUrl, fetchOptions),
+        fetch(offersUrl, fetchOptions),
+        fetch(destinationsUrl, fetchOptions)
+      ])
+  .then((response) => Promise.all(response.map((e) => e.json())))
+  .then(([points, pointTypes, destinations]) => {
 
     // show menu
 
@@ -40,7 +47,6 @@ fetch(pointsUrl, fetchOptions)
     };
     siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
 
-
     render(controlsNavigation, siteMenuComponent, RenderPosition.BEFOREEND);
 
     const filterModel = new FilterModel();
@@ -49,27 +55,20 @@ fetch(pointsUrl, fetchOptions)
 
     new FilterPresenter(controlsFilters, filterModel, pointsModel);
 
-    // Убрать в отдельный модуль
-    const offersUrl = 'https://16.ecmascript.pages.academy/big-trip/offers';
-    const destinationsUrl = 'https://16.ecmascript.pages.academy/big-trip/destinations';
+    const tripPresenter = new TripPresenter(mainSort, pointsModel, filterModel, pointTypes, destinations);
 
-    Promise
-      .all([
-        fetch(offersUrl, fetchOptions),
-        fetch(destinationsUrl, fetchOptions)
-      ])
-      .then(
-        (response) => Promise.all(response.map((e) => e.json()))
-      )
-      .then(
-        ([pointTypes, destinations]) => {
-          const tripPresenter = new TripPresenter(mainSort, pointsModel, filterModel, pointTypes, destinations);
-          document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
-            evt.preventDefault();
-            tripPresenter.createPoint();
-          });
-        }
-      );
+    const handleNewPointFormClose = () => {
+      alert('handleNewPointFormClose');
+      document.querySelector('.trip-main__event-add-btn').disabled = false;
+    };
+
+    document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+      evt.preventDefault();
+      console.log(evt.target);
+      evt.target.disabled = true;
+      console.log(document.querySelector('#filter-everything'));
+      tripPresenter.createPoint(handleNewPointFormClose);
+    });
   });
 
 
