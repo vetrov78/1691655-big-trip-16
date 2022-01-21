@@ -1,19 +1,18 @@
+import camelcaseKeys from 'camelcase-keys';
 import { getRandomString } from './utils/utils';
+import { render, RenderPosition } from './utils/render';
+import { MenuItem } from './const';
 
 import SiteMenuView from './view/site-menu/site-menu-view';
-
-import { render, RenderPosition } from './utils/render';
 import TripPresenter from './presenter/trip-presenter';
-import camelcaseKeys from 'camelcase-keys';
+import FilterPresenter from './presenter/filter-presenter';
 import PointsModel from './model/points-model';
 import FilterModel from './model/filter-model';
-import FilterPresenter from './presenter/filter-presenter';
+
 
 const controlsNavigation = document.querySelector('.trip-controls__navigation');
 const controlsFilters = document.querySelector('.trip-controls__filters');
 const mainSort = document.querySelector('.trip-events');
-
-render(controlsNavigation, new SiteMenuView(), RenderPosition.BEFOREEND);
 
 const pointsUrl = 'https://16.ecmascript.pages.academy/big-trip/points';
 const fetchOptions = {
@@ -26,6 +25,24 @@ const fetchOptions = {
 fetch(pointsUrl, fetchOptions)
   .then((response) => response.json())
   .then((points) => {
+
+    // show menu
+
+    const siteMenuComponent = new SiteMenuView();
+    const handleSiteMenuClick = (menuItem) => {
+      switch (menuItem) {
+        case MenuItem.TABLE:
+
+          break;
+        case MenuItem.STATS:
+          break;
+      }
+    };
+    siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+
+
+    render(controlsNavigation, siteMenuComponent, RenderPosition.BEFOREEND);
+
     const filterModel = new FilterModel();
     const pointsModel = new PointsModel();
     pointsModel.points = camelcaseKeys(points);
