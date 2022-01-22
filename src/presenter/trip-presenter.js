@@ -58,6 +58,8 @@ export default class TripPresenter {
   }
 
   init = () => {
+    render(this.#tripContainer, this.#pointsListComponent, RenderPosition.BEFOREEND);
+
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filtersModel.addObserver(this.#handleModelEvent);
 
@@ -74,7 +76,6 @@ export default class TripPresenter {
   }
 
   createPoint = (callback) => {
-    this.#filtersModel.setFilter(UpdateType.MINOR, FilterType.EVERYTHING);
     this.#pointNewPresenter.init(callback);
   }
 
