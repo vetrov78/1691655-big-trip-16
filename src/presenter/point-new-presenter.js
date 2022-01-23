@@ -25,7 +25,6 @@ export default class PointNewPresenter {
     this.#destroyCallback = callback;
 
     if (this.#pointEditComponent !== null) {
-      alert('previous presenter is alive');
       return;
     }
 

@@ -1,5 +1,5 @@
-import { getDurationString } from '../../utils/utils';
 import dayjs from 'dayjs';
+import { getDurationString } from '../../utils/utils';
 
 const createChoosenOffersList = (offers) => {
   let result = '';
@@ -16,8 +16,7 @@ const createChoosenOffersList = (offers) => {
 
 export const createSitePointTemplate = (point) => {
 
-  const {basePrice, dateFrom, dateTo, destination, isFavorite, offers, type} = point;
-  const durationInMinutes = dayjs(dateTo).diff(dayjs(dateFrom), 'm');
+  const {basePrice, dateFrom, dateTo, duration, destination, isFavorite, offers, type} = point;
 
   return `<li class="trip-events__item">
     <div class="event">
@@ -32,7 +31,7 @@ export const createSitePointTemplate = (point) => {
           &mdash;
           <time class="event__end-time" datetime="${dayjs(dateTo)}">${dayjs(dateTo).format('hh:mm')}</time>
         </p>
-        <p class="event__duration">${getDurationString(durationInMinutes)}</p>
+        <p class="event__duration">${getDurationString(duration)}</p>
       </div>
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
