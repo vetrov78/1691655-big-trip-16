@@ -1,14 +1,36 @@
+import camelcaseKeys from 'camelcase-keys';
+import dayjs from 'dayjs';
+import { UpdateType } from '../const';
+
 import AbstractObservable from '../utils/abstract-observable';
 
 export default class PointsModel extends AbstractObservable {
-  #points = null;
+  #apiService = null;
+  #points = [];
 
-  set points(points) {
-    this.#points = [...points];
+  constructor(apiService) {
+    super();
+    this.#apiService = apiService;
+
+    this.init();
   }
 
   get points() {
     return this.#points;
+  }
+
+  init = async () => {
+    try {
+      const points = await this.#apiService.points;
+      this.#points = camelcaseKeys(points).map((point) => ({
+        ...point,
+        duration: dayjs(point.dateTo).diff(dayjs(point.dateFrom), 'm'),
+      }));
+    } catch(err) {
+      this.#points = [];
+    }
+
+    this._notify(UpdateType.INIT);
   }
 
   updatePoint = (updateType, update) => {

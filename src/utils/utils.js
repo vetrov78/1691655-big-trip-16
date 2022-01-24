@@ -8,11 +8,6 @@ export const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-
-export const getRandomString = (length = 10) => (
-  (Math.random() + 1).toString(length)
-);
-
 export const getDurationString = (durationInMinutes) => {
 
   const days = Math.floor(durationInMinutes / 1440);

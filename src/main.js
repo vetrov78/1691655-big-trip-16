@@ -1,6 +1,3 @@
-import camelcaseKeys from 'camelcase-keys';
-import dayjs from 'dayjs';
-import { getRandomString } from './utils/utils';
 import { disableChildren, enableChildren, remove, render, RenderPosition } from './utils/render';
 import { MenuItem } from './const';
 
@@ -10,40 +7,40 @@ import FilterPresenter from './presenter/filter-presenter';
 import PointsModel from './model/points-model';
 import FilterModel from './model/filter-model';
 import StatisticsView from './view/site-statistics/site-statistics-view';
+import ApiService from './api-service';
 
+const END_POINT = 'https://16.ecmascript.pages.academy/big-trip/';
+const AUTHORIZATION = 'Basic hS2sfS44wcl1sa2j';
 
 const controlsNavigation = document.querySelector('.trip-controls__navigation');
 const controlsFilters = document.querySelector('.trip-controls__filters');
 const mainSort = document.querySelector('.trip-events');
 const siteMenuComponent = new SiteMenuView();
 
-const pointsUrl = 'https://16.ecmascript.pages.academy/big-trip/points';
 const offersUrl = 'https://16.ecmascript.pages.academy/big-trip/offers';
 const destinationsUrl = 'https://16.ecmascript.pages.academy/big-trip/destinations';
 const fetchOptions = {
   method: 'GET',
   headers: {
-    'Authorization': `Basic ${getRandomString()}`,
+    'Authorization': 'Basic fcf324571e',
   },
 };
 
 Promise
   .all([
-    fetch(pointsUrl, fetchOptions),
     fetch(offersUrl, fetchOptions),
     fetch(destinationsUrl, fetchOptions)
   ])
   .then((response) => Promise.all(response.map((e) => e.json())))
-  .then(([points, pointTypes, destinations]) => {
-    points = camelcaseKeys(points);
-    points = points.map((point) => ({
-      ...point,
-      duration: dayjs(point.dateTo).diff(dayjs(point.dateFrom), 'm'),
-    }));
+  .then(([pointTypes, destinations]) => {
+    // points = camelcaseKeys(points);
+    // points = points.map((point) => ({
+    //   ...point,
+    //   duration: dayjs(point.dateTo).diff(dayjs(point.dateFrom), 'm'),
+    // }));
 
     const filterModel = new FilterModel();
-    const pointsModel = new PointsModel();
-    pointsModel.points = points;
+    const pointsModel = new PointsModel(new ApiService(END_POINT, AUTHORIZATION));
 
     const tripPresenter = new TripPresenter(mainSort, pointsModel, filterModel, pointTypes, destinations);
     const filterPresenter = new FilterPresenter(controlsFilters, filterModel, pointsModel);
