@@ -14,6 +14,7 @@ export const getRandomString = (length = 10) => (
 );
 
 export const getDurationString = (durationInMinutes) => {
+
   const days = Math.floor(durationInMinutes / 1440);
   const hours = Math.floor((durationInMinutes - days * 1440) / 60);
   const minutes = durationInMinutes - days * 1440 - hours * 60;
