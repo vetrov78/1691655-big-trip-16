@@ -1,4 +1,4 @@
-import { UpdateType, UserAction } from '../const';
+import { UpdateType, UserAction } from '../consts';
 import { remove, render, RenderPosition } from '../utils/render';
 import { isEscPressed } from '../utils/utils';
 import EditPointView from '../view/site-point-edit/site-point-edit-view';

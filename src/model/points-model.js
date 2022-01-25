@@ -1,12 +1,14 @@
 import camelcaseKeys from 'camelcase-keys';
 import dayjs from 'dayjs';
-import { UpdateType } from '../const';
+import { UpdateType } from '../consts';
 
 import AbstractObservable from '../utils/abstract-observable';
 
 export default class PointsModel extends AbstractObservable {
   #apiService = null;
   #points = [];
+  #destinations = [];
+  #offers = [];
 
   constructor(apiService) {
     super();
@@ -19,6 +21,14 @@ export default class PointsModel extends AbstractObservable {
     return this.#points;
   }
 
+  get destinations() {
+    return this.#destinations;
+  }
+
+  get offers() {
+    return this.#offers;
+  }
+
   init = async () => {
     try {
       const points = await this.#apiService.points;
@@ -28,6 +38,18 @@ export default class PointsModel extends AbstractObservable {
       }));
     } catch(err) {
       this.#points = [];
+    }
+
+    try {
+      this.#destinations = await this.#apiService.destinations;
+    } catch(err) {
+      console.log(err);
+    }
+
+    try {
+      this.#offers = await this.#apiService.offers;
+    } catch(err) {
+      console.log(err);
     }
 
     this._notify(UpdateType.INIT);

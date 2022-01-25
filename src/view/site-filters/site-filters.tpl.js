@@ -1,4 +1,4 @@
-import { FilterType } from '../../const';
+import { FilterType } from '../../consts';
 
 const createFilterItemTemplate = (filterType, currentFilter) => (
   `<div class="trip-filters__filter">

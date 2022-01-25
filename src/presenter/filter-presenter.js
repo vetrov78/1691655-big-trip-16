@@ -1,4 +1,4 @@
-import { FilterType, UpdateType } from '../const';
+import { FilterType, UpdateType } from '../consts';
 import { render, replace, remove, RenderPosition} from '../utils/render';
 import SiteFilterView from '../view/site-filters/site-filters-view';
 
