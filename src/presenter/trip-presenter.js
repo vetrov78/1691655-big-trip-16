@@ -1,4 +1,4 @@
-import { FilterType, SortType, UpdateType, UserAction } from '../const';
+import { FilterType, SortType, UpdateType, UserAction } from '../consts';
 import { RenderPosition, render, remove } from '../utils/render';
 import { sortStartTimeDown, sortTimeDown } from '../utils/utils';
 import { filter } from '../utils/filter';
@@ -8,6 +8,7 @@ import SiteSortView from '../view/site-sort/site-sort-view';
 import PointPresenter from './point-presenter';
 import SiteNoPointView from '../view/site-no-point/site-no-point-view';
 import PointNewPresenter from './point-new-presenter';
+import LoadingView from '../view/site-loading/site-loading-view';
 
 export default class TripPresenter {
   #tripContainer = null;
@@ -15,10 +16,11 @@ export default class TripPresenter {
   #filtersModel = null;
 
   #sortComponent = null;
-  #pointsListComponent = new PointsListView();
   #noPointsComponent = null;
+  #pointsListComponent = new PointsListView();
+  #loadingComponent = new LoadingView();
 
-  #pointTypes = null;
+  #offers = null;
   #destinations = null;
 
   #pointPresenter = new Map();
@@ -26,17 +28,13 @@ export default class TripPresenter {
 
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.EVERYTHING;
+  #isLoading = true;
 
-  constructor(tripContainer, pointsModel, filtersModel, pointTypes, destinations) {
+  constructor(tripContainer, pointsModel, filtersModel) {
     this.#tripContainer = tripContainer;
 
     this.#pointsModel = pointsModel;
     this.#filtersModel = filtersModel;
-
-    this.#pointTypes = pointTypes;
-    this.#destinations = destinations;
-
-    this.#pointNewPresenter = new PointNewPresenter(this.#pointsListComponent, this.#handleViewAction, this.#pointTypes, this.#destinations);
 
     this.#pointsModel.points.sort(sortStartTimeDown);
     this.init();
@@ -102,6 +100,11 @@ export default class TripPresenter {
         this.#clearBoard();
         this.#renderBoard();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderBoard();
+        break;
     }
   };
 
@@ -119,6 +122,7 @@ export default class TripPresenter {
     this.#pointPresenter.clear();
 
     remove(this.#sortComponent);
+    remove(this.#loadingComponent);
     remove(this.#pointsListComponent);
 
     if (this.#noPointsComponent) {
@@ -159,15 +163,28 @@ export default class TripPresenter {
     );
   }
 
-  #renderBoard = () => {
-    const pointsLength = this.points.length;
+  #renderLoading = () => {
+    render(this.#tripContainer, this.#loadingComponent, RenderPosition.AFTERBEGIN);
+  }
 
+  #renderBoard = () => {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
+    this.#destinations = this.#pointsModel.destinations;
+    this.#offers = this.#pointsModel.offers;
+
+    this.#pointNewPresenter = new PointNewPresenter(this.#pointsListComponent, this.#handleViewAction, this.#offers, this.#destinations);
+
+    const pointsLength = this.points.length;
     if (pointsLength === 0) {
       this.#renderNoPoints(this.#filterType);
       return;
     }
     this.#renderSort();
     this.#renderPointsList();
-    this.#renderPoints(this.#pointTypes, this.#destinations);
+    this.#renderPoints(this.#offers, this.#destinations);
   }
 }

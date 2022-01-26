@@ -89,7 +89,7 @@ export default class EditPointView extends SmartView {
     evt.preventDefault();
 
     this.updateData({
-      basePrice: evt.target.value,
+      basePrice: Number(evt.target.value),
     });
   }
 
@@ -207,7 +207,5 @@ export default class EditPointView extends SmartView {
 
   static parsePointToData = (point) => _.cloneDeep(point)
 
-  static parseDataToPoint = (data) => ({
-    ...data,
-  })
+  static parseDataToPoint = (data) => ({...data,})
 }

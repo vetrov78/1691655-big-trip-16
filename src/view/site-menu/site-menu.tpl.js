@@ -1,4 +1,4 @@
-import { MenuItem } from '../../const';
+import { MenuItem } from '../../consts';
 
 export const createSiteMenuTemplate = () => (
   `<nav class="trip-controls__trip-tabs  trip-tabs">

@@ -3,7 +3,7 @@ import EditPointView from '../view/site-point-edit/site-point-edit-view';
 
 import { isEscPressed, isDatesEqualInMinutes } from '../utils/utils';
 import { RenderPosition, render, replace, remove } from '../utils/render';
-import { UpdateType, UserAction } from '../const';
+import { UpdateType, UserAction } from '../consts';
 
 const Mode = {
   DEFAULT: 'DEFAULT',

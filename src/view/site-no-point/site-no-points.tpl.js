@@ -1,4 +1,4 @@
-import { FilterType } from '../../const';
+import { FilterType } from '../../consts';
 
 const noPointsTextType = {
   [FilterType.EVERYTHING]: 'Click New Event to create your first point',
