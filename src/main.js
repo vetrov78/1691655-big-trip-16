@@ -9,7 +9,7 @@ import FilterModel from './model/filter-model';
 import StatisticsView from './view/site-statistics/site-statistics-view';
 import ApiService from './api-service';
 
-const END_POINT = 'https://16.ecmascript.pages.academy/big-trip/';
+const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
 const AUTHORIZATION = 'Basic hS2sfS44wcl1sa2j';
 
 const controlsNavigation = document.querySelector('.trip-controls__navigation');
@@ -48,8 +48,10 @@ const handleSiteMenuClick = (menuItem) => {
   }
 };
 
-siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
-render(controlsNavigation, siteMenuComponent, RenderPosition.BEFOREEND);
+pointsModel.init().finally(() => {
+  siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+  render(controlsNavigation, siteMenuComponent, RenderPosition.BEFOREEND);
+});
 
 const handleNewPointFormClose = () => {
   document.querySelector('.trip-main__event-add-btn').disabled = false;

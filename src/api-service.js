@@ -1,3 +1,5 @@
+import jsConvert from 'js-convert-case';
+
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
@@ -31,7 +33,7 @@ export default class ApiService {
     const response = await this.#load({
       url: `points/${point.id}`,
       method: Method.PUT,
-      body: JSON.stringify(point),
+      body: JSON.stringify(this.#adaptToServer(point)),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
@@ -59,6 +61,12 @@ export default class ApiService {
     } catch (err) {
       ApiService.catchError(err);
     }
+  }
+
+  #adaptToServer = (point) => {
+    delete point.duration;
+
+    return jsConvert.snakeKeys(point);
   }
 
   static parseResponse = (response) => response.json();

@@ -13,8 +13,6 @@ export default class PointsModel extends AbstractObservable {
   constructor(apiService) {
     super();
     this.#apiService = apiService;
-
-    this.init();
   }
 
   get points() {
@@ -32,10 +30,8 @@ export default class PointsModel extends AbstractObservable {
   init = async () => {
     try {
       const points = await this.#apiService.points;
-      this.#points = camelcaseKeys(points).map((point) => ({
-        ...point,
-        duration: dayjs(point.dateTo).diff(dayjs(point.dateFrom), 'm'),
-      }));
+      this.#points = points.map(this.#adaptToClient);
+
     } catch(err) {
       this.#points = [];
     }
@@ -43,32 +39,39 @@ export default class PointsModel extends AbstractObservable {
     try {
       this.#destinations = await this.#apiService.destinations;
     } catch(err) {
-      console.log(err);
+      // console.log(err);
     }
 
     try {
       this.#offers = await this.#apiService.offers;
     } catch(err) {
-      console.log(err);
+      // console.log(err);
     }
 
     this._notify(UpdateType.INIT);
   }
 
-  updatePoint = (updateType, update) => {
+  updatePoint = async (updateType, update) => {
     const index = this.#points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
       throw Error ('Can\'t update unexisting point');
     }
 
-    this.#points = [
-      ...this.#points.slice(0, index),
-      update,
-      ...this.#points.slice(index + 1),
-    ];
+    try {
+      const response = await this.#apiService.updatePoint(update);
+      const updatedPoint = this.#adaptToClient(response);
 
-    this._notify(updateType, update);
+      this.#points = [
+        ...this.#points.slice(0, index),
+        updatedPoint,
+        ...this.#points.slice(index + 1),
+      ];
+
+      this._notify(updateType, update);
+    } catch(err) {
+      throw new Error('Can\'t update point');
+    }
   };
 
   addPoint = (updateType, update) => {
@@ -94,5 +97,12 @@ export default class PointsModel extends AbstractObservable {
 
     this._notify(updateType, update);
   };
+
+  #adaptToClient = (point) => {
+    const convertedPoint = camelcaseKeys(point);
+    convertedPoint.duration = dayjs(convertedPoint.dateTo).diff(dayjs(convertedPoint.dateFrom), 'm');
+
+    return convertedPoint;
+  }
 }
 
