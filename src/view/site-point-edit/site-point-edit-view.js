@@ -29,7 +29,7 @@ export default class EditPointView extends SmartView {
   #pointTypes = null;
   #destinations = null;
 
-  constructor (pointTypes, destinations,point = BLANK_POINT) {
+  constructor (pointTypes, destinations, point = BLANK_POINT) {
     super();
     this.#chosenType = pointTypes.find((el) => el.type === point.type);
     this._data = EditPointView.parsePointToData(point);
@@ -205,7 +205,24 @@ export default class EditPointView extends SmartView {
     this._callback.deleteClick(EditPointView.parseDataToPoint(this._data));
   };
 
-  static parsePointToData = (point) => _.cloneDeep(point)
+  static parsePointToData = (point) => {
+    const clonedPoint = _.cloneDeep(point);
 
-  static parseDataToPoint = (data) => ({...data,})
+    return {
+      ...clonedPoint,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    };
+  }
+
+  static parseDataToPoint = (data) => {
+    const point = {...data,};
+
+    delete point.isDeleting;
+    delete point.isSaving;
+    delete point.isDisabled;
+
+    return point;
+  }
 }
