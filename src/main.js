@@ -7,7 +7,7 @@ import FilterPresenter from './presenter/filter-presenter';
 import PointsModel from './model/points-model';
 import FilterModel from './model/filter-model';
 import StatisticsView from './view/site-statistics/site-statistics-view';
-import ApiService from './api-service';
+import ApiService from './services/api-service';
 
 const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
 const AUTHORIZATION = 'Basic hS2sfS44wcl1sa2j';
@@ -30,18 +30,14 @@ const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.TABLE:
       remove(statisticsComponent);
-
       document.querySelector('.trip-main__event-add-btn').disabled = false;
-
       tripPresenter.init();
       filterPresenter.init();
       break;
     case MenuItem.STATS:
       tripPresenter.destroy();
       filterPresenter.destroy();
-
       document.querySelector('.trip-main__event-add-btn').disabled = true;
-
       statisticsComponent = new StatisticsView(pointsModel.points);
       render(mainSort, statisticsComponent, RenderPosition.BEFOREEND);
       break;

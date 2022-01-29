@@ -2,7 +2,7 @@ import camelcaseKeys from 'camelcase-keys';
 import dayjs from 'dayjs';
 import { UpdateType } from '../consts';
 
-import AbstractObservable from '../utils/abstract-observable';
+import AbstractObservable from '../services/abstract-observable';
 
 export default class PointsModel extends AbstractObservable {
   #apiService = null;
@@ -31,7 +31,6 @@ export default class PointsModel extends AbstractObservable {
     try {
       const points = await this.#apiService.points;
       this.#points = points.map(this.#adaptToClient);
-
     } catch(err) {
       this.#points = [];
     }
