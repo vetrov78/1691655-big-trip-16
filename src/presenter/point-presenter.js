@@ -2,12 +2,18 @@ import SitePointView from '../view/site-point/site-point-view';
 import EditPointView from '../view/site-point-edit/site-point-edit-view';
 
 import { isEscPressed, isDatesEqualInMinutes } from '../utils/utils';
-import { RenderPosition, render, replace, remove } from '../utils/render';
+import { RenderPosition, render, replace, remove, disableChildren } from '../utils/render';
 import { UpdateType, UserAction } from '../consts';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING'
+};
+
+export const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+  ABORTING: 'ABORTING',
 };
 
 export default class PointPresenter {
@@ -43,7 +49,7 @@ export default class PointPresenter {
     this.#pointComponent = new SitePointView(this.#point);
     this.#pointEditComponent = new EditPointView(this.#pointTypes, this.#destinations, this.#point);
 
-    this.#pointComponent.setOpenEditHandler(this.#handleOpenEditCLick);
+    this.#pointComponent.setOpenEditHandler(this.#handleOpenEditClick);
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
 
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmitClick);
@@ -60,7 +66,8 @@ export default class PointPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#pointEditComponent, prevEditComponent);
+      replace(this.#pointComponent, prevEditComponent);
+      this.#mode = Mode.EDITING;
     }
 
     remove(prevPointComponent);
@@ -75,6 +82,41 @@ export default class PointPresenter {
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
       this.#replaceEditPointToPoint();
+    }
+  }
+
+  setViewState = (state) => {
+    if (this.#mode === Mode.DEFAULT) {
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#pointEditComponent.updateData ({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this.#pointEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true,
+        });
+        disableChildren(this.#pointEditComponent.element);
+        break;
+      case State.DELETING:
+        this.#pointEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+        });
+        disableChildren(this.#pointEditComponent.element);
+        break;
+      case State.ABORTING:
+        this.#pointComponent.shake(resetFormState);
+        this.#pointEditComponent.shake(resetFormState);
+        break;
     }
   }
 
@@ -99,7 +141,7 @@ export default class PointPresenter {
     this.#mode = Mode.DEFAULT;
   };
 
-  #handleOpenEditCLick = () => {
+  #handleOpenEditClick = () => {
     this.#replacePointToEditPoint();
   };
 
@@ -125,8 +167,6 @@ export default class PointPresenter {
       (isAnyDateChanged || isPriceChanged) ? UpdateType.MINOR : UpdateType.PATCH,
       update,
     );
-
-    this.#replaceEditPointToPoint();
   };
 
   #handleFormDeleteClick = (point) => {

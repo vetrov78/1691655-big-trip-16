@@ -30,6 +30,13 @@ export const sortStartTimeDown = (pointA, pointB) => {
   return dayjs(dateFromA).isAfter(dateFromB) ? 1 : -1;
 };
 
+export const sortFinishTimeUp = (pointA, pointB) => {
+  const {dateTo: dateA} = pointA;
+  const {dateTo: dateB} = pointB;
+
+  return dayjs(dateA).isBefore(dateB) ? 1 : -1;
+};
+
 export const sortTimeDown = (pointA, pointB) => {
   const {dateFrom: dateFromA, dateTo: dateToA} = pointA;
   const {dateFrom: dateFromB, dateTo: dateToB} = pointB;

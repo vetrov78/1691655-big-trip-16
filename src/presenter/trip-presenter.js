@@ -1,20 +1,23 @@
 import { FilterType, SortType, UpdateType, UserAction } from '../consts';
 import { RenderPosition, render, remove } from '../utils/render';
-import { sortStartTimeDown, sortTimeDown } from '../utils/utils';
+import { sortFinishTimeUp, sortStartTimeDown, sortTimeDown } from '../utils/utils';
 import { filter } from '../utils/filter';
 
 import PointsListView from '../view/site-list/site-list-view';
 import SiteSortView from '../view/site-sort/site-sort-view';
-import PointPresenter from './point-presenter';
+import PointPresenter, {State as PointPresenterViewState} from './point-presenter';
 import SiteNoPointView from '../view/site-no-point/site-no-point-view';
 import PointNewPresenter from './point-new-presenter';
 import LoadingView from '../view/site-loading/site-loading-view';
+import SiteTripInfoView from '../view/site-trip-info/site-trip-info-view';
+import dayjs from 'dayjs';
 
 export default class TripPresenter {
   #tripContainer = null;
   #pointsModel = null;
   #filtersModel = null;
 
+  #tripInfoComponent = null;
   #sortComponent = null;
   #noPointsComponent = null;
   #pointsListComponent = new PointsListView();
@@ -40,7 +43,6 @@ export default class TripPresenter {
     this.init();
   }
 
-  //возвращает отсортированный список точек
   get points() {
     this.#filterType = this.#filtersModel.filter;
     const points = this.#pointsModel.points;
@@ -77,16 +79,31 @@ export default class TripPresenter {
     this.#pointNewPresenter.init(callback);
   }
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.#pointsModel.updatePoint(updateType, update);
+        this.#pointPresenter.get(update.id).setViewState(PointPresenterViewState.SAVING);
+        try {
+          await this.#pointsModel.updatePoint(updateType, update);
+        } catch(err) {
+          this.#pointPresenter.get(update.id).setViewState(PointPresenterViewState.ABORTING);
+        }
         break;
       case UserAction.DELETE_POINT:
-        this.#pointsModel.deletePoint(updateType, update);
+        this.#pointPresenter.get(update.id).setViewState(PointPresenterViewState.DELETING);
+        try {
+          await this.#pointsModel.deletePoint(updateType, update);
+        } catch(err) {
+          this.#pointPresenter.get(update.id).setViewState(PointPresenterViewState.ABORTING);
+        }
         break;
       case UserAction.ADD_POINT:
-        this.#pointsModel.addPoint(updateType, update);
+        this.#pointNewPresenter.setSaving();
+        try {
+          await  this.#pointsModel.addPoint(updateType, update);
+        } catch(err) {
+          this.#pointNewPresenter.setAborting();
+        }
         break;
     }
   }
@@ -121,6 +138,7 @@ export default class TripPresenter {
     this.#pointPresenter.forEach((presenter) => presenter.destroy());
     this.#pointPresenter.clear();
 
+    remove(this.#tripInfoComponent);
     remove(this.#sortComponent);
     remove(this.#loadingComponent);
     remove(this.#pointsListComponent);
@@ -167,11 +185,51 @@ export default class TripPresenter {
     render(this.#tripContainer, this.#loadingComponent, RenderPosition.AFTERBEGIN);
   }
 
+  #getTripInfo = () => {
+    const tripInfo = {};
+    const points = this.#pointsModel.points;
+
+    // Города
+    const destinationNames = [...new Set(points.map((item) => item.destination.name))];
+    if (destinationNames.length > 3) {
+      tripInfo.cities = `${destinationNames[0]} - ... - ${destinationNames[destinationNames.length - 1]}`;
+    } else {
+      tripInfo.cities = `${destinationNames[0]} - ${destinationNames[1]} - ${destinationNames[2]}`;
+    }
+
+    // Даты
+    const firstDateFrom = points.sort(sortStartTimeDown)[0].dateFrom;
+    const lastDateTo = points.sort(sortFinishTimeUp)[0].dateTo;
+    tripInfo.dates = `${dayjs(firstDateFrom).format('MMM D')} - ${dayjs(lastDateTo).format('MMM D')}`;
+
+    // Стоимость
+    const basePriceTotal = points.map((item) => item.basePrice).reduce((a, b) => a + b);
+
+    const arrayOfPointsOffers = points.map((item) => item.offers);
+    const getPointOffersTotal = (previousTotal, currentOffer) => previousTotal + currentOffer.price;
+    const getOffersTotal = (previousTotal, currentPointOffers) => previousTotal + currentPointOffers.reduce(getPointOffersTotal, 0);
+    const offersPriceTotal = arrayOfPointsOffers.reduce(getOffersTotal, 0);
+
+    tripInfo.totalPrice = basePriceTotal + offersPriceTotal;
+
+    return tripInfo;
+  }
+
+  #renderTripInfo = () => {
+    const tripMainContainer = document.querySelector('.trip-main');
+    this.#tripInfoComponent = new SiteTripInfoView(this.#getTripInfo());
+
+    render(tripMainContainer, this.#tripInfoComponent, RenderPosition.AFTERBEGIN);
+  }
+
   #renderBoard = () => {
     if (this.#isLoading) {
       this.#renderLoading();
       return;
     }
+
+    // Добавляет блок с общей информацией о маршруте
+    this.#renderTripInfo();
 
     this.#destinations = this.#pointsModel.destinations;
     this.#offers = this.#pointsModel.offers;
