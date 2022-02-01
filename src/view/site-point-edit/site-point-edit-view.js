@@ -31,10 +31,16 @@ export default class EditPointView extends SmartView {
 
   constructor (pointTypes, destinations, point = BLANK_POINT) {
     super();
+
     this.#chosenType = pointTypes.find((el) => el.type === point.type);
-    this._data = EditPointView.parsePointToData(point);
     this.#pointTypes = pointTypes;
     this.#destinations = destinations;
+
+    if (!point.destination.name) {
+      point.destination.name = this.#destinations[0].name;
+    }
+
+    this._data = EditPointView.parsePointToData(point);
 
     this.#setInnerHandlers();
     this.#setStartDatepicker();
@@ -114,6 +120,7 @@ export default class EditPointView extends SmartView {
       evt.target.setCustomValidity('');
     } else {
       evt.target.setCustomValidity('Выберите пункт назначения из списка');
+      evt.target.value = this._data.destination.name;
     }
 
     evt.target.reportValidity();

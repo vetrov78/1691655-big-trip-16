@@ -26,7 +26,7 @@ const createPhotosTemplate = (destination) => {
   destination['pictures'].forEach(
     (photo) => (
       result += `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`
-    )
+    ),
   );
 
   return `<div class="event__photos-container">

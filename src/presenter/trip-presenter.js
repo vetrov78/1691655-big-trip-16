@@ -227,7 +227,6 @@ export default class TripPresenter {
       this.#renderLoading();
       return;
     }
-
     // Добавляет блок с общей информацией о маршруте
     this.#renderTripInfo();
 
