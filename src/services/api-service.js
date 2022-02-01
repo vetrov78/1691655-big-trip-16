@@ -7,14 +7,10 @@ const Method = {
   DELETE: 'DELETE',
 };
 
-export default class ApiService {
-  #endPoint = null;
-  #authorization = null;
+const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
+const AUTHORIZATION = 'Basic hS2sfS44wcl1sa2j';
 
-  constructor(endPoint, authorization) {
-    this.#endPoint = endPoint;
-    this.#authorization = authorization;
-  }
+export default class ApiService {
 
   get points() {
     return this.#load({url: 'points'})
@@ -71,10 +67,10 @@ export default class ApiService {
     body = null,
     headers = new Headers(),
   }) => {
-    headers.append('Authorization', this.#authorization);
+    headers.append('Authorization', AUTHORIZATION);
 
     const response = await fetch(
-      `${this.#endPoint}/${url}`,
+      `${END_POINT}/${url}`,
       {method, body, headers}
     );
 

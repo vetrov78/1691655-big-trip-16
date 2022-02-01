@@ -9,16 +9,13 @@ import FilterModel from './model/filter-model';
 import StatisticsView from './view/site-statistics/site-statistics-view';
 import ApiService from './services/api-service';
 
-const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
-const AUTHORIZATION = 'Basic hS2sfS44wcl1sa2j';
-
 const controlsNavigation = document.querySelector('.trip-controls__navigation');
 const controlsFilters = document.querySelector('.trip-controls__filters');
 const mainSort = document.querySelector('.trip-events');
 const siteMenuComponent = new SiteMenuView();
 
 const filterModel = new FilterModel();
-const pointsModel = new PointsModel(new ApiService(END_POINT, AUTHORIZATION));
+const pointsModel = new PointsModel(new ApiService());
 
 const tripPresenter = new TripPresenter(mainSort, pointsModel, filterModel);
 const filterPresenter = new FilterPresenter(controlsFilters, filterModel, pointsModel);
