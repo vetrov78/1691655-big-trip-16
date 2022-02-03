@@ -10,7 +10,7 @@ import dayjs from 'dayjs';
 const BLANK_POINT = {
   basePrice: 0,
   dateFrom: dayjs(),
-  dateTo: dayjs(),
+  dateTo: dayjs().add(1, 'day'),
   destination: {
     name: '',
     description: '',
@@ -38,6 +38,8 @@ export default class EditPointView extends SmartView {
 
     if (!point.destination.name) {
       point.destination.name = this.#destinations[0].name;
+      point.destination.description = this.#destinations[0].description;
+      point.destination.pictures = this.#destinations[0].pictures;
     }
 
     this._data = EditPointView.parsePointToData(point);

@@ -146,6 +146,8 @@ export default class TripPresenter {
     remove(this.#pointsListComponent);
 
     if (this.#noPointsComponent) {
+      console.log(this.#noPointsComponent);
+
       remove(this.#noPointsComponent);
     }
 
@@ -170,7 +172,7 @@ export default class TripPresenter {
   }
 
   #renderNoPoints = () => {
-    this.#noPointsComponent = new SiteNoPointView(this.#filterType).element;
+    this.#noPointsComponent = new SiteNoPointView(this.#filterType);
     render(this.#tripContainer, this.#noPointsComponent, RenderPosition.AFTERBEGIN);
   };
 

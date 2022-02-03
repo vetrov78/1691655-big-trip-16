@@ -57,6 +57,7 @@ const createPhotosList = (pictures) => pictures
   .join('');
 
 export const createEditPointTemplate = (data, pointTypes, destinations) => {
+
   const {basePrice, dateFrom, dateTo, destination, offers: choosenOffers, type, isDeleting, isSaving} = data;
   const pointType = pointTypes.find((element) => element.type === type);
 
