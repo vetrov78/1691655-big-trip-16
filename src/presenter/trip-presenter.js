@@ -100,7 +100,7 @@ export default class TripPresenter {
       case UserAction.ADD_POINT:
         this.#pointNewPresenter.setSaving();
         try {
-          await  this.#pointsModel.addPoint(updateType, update);
+          await this.#pointsModel.addPoint(updateType, update);
         } catch(err) {
           this.#pointNewPresenter.setAborting();
         }
@@ -135,6 +135,8 @@ export default class TripPresenter {
   }
 
   #clearBoard = ({resetSortType = false} = {}) => {
+    this.#pointNewPresenter.destroy();
+
     this.#pointPresenter.forEach((presenter) => presenter.destroy());
     this.#pointPresenter.clear();
 

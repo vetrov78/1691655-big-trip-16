@@ -67,7 +67,7 @@ export default class PointsModel extends AbstractObservable {
         ...this.#points.slice(index + 1),
       ];
 
-      this._notify(updateType, update);
+      this._notify(updateType, updatedPoint);
     } catch(err) {
       throw new Error('Can\'t update point');
     }

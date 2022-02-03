@@ -1,7 +1,7 @@
-import AbstractView from '../abstract-view';
+import SmartView from '../smart-view';
 import { createSitePointTemplate } from './site-point.tpl';
 
-export default class SitePointView extends AbstractView {
+export default class SitePointView extends SmartView {
   #point = null;
 
   constructor (point) {

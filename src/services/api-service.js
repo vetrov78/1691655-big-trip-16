@@ -93,6 +93,7 @@ export default class ApiService {
   static checkStatus = (response) => {
     if (!response.ok) {
       throw new Error(`${response.status}: ${response.statusText}`);
+
     }
   }
 
