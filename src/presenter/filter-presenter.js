@@ -1,6 +1,13 @@
 import { FilterType, UpdateType } from '../consts';
 import { render, replace, remove, RenderPosition} from '../utils/render';
 import SiteFiltersView from '../view/site-filters/site-filters-view';
+import { filter } from '../utils/filter';
+
+const FiltersStatus = {
+  EVERYTHING: true,
+  FUTURE: true,
+  PAST: true,
+};
 
 export default class FilterPresenter {
   #filterContainer = null;
@@ -8,19 +15,28 @@ export default class FilterPresenter {
   #pointsModel = null;
 
   #filterComponent = null;
+  #filterStatus = null;
 
   constructor(filterContainer, filterModel, pointsModel) {
     this.#filterContainer = filterContainer;
     this.#filterModel = filterModel;
     this.#pointsModel = pointsModel;
+    this.#filterStatus = FiltersStatus;
 
     this.init();
   }
 
   init = () => {
+
     const prevFilterComponent = this.#filterComponent;
 
-    this.#filterComponent = new SiteFiltersView(this.#filterModel.filter);
+    Object.keys(FiltersStatus).map(
+      (key) => {
+        this.#filterStatus[key] = filter[FilterType[key]](this.#pointsModel.points).length > 0;
+      }
+    );
+
+    this.#filterComponent = new SiteFiltersView(this.#filterModel.filter, this.#filterStatus);
     this.#filterComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
 
     this.#filterModel.addObserver(this.#handleModelEvent);

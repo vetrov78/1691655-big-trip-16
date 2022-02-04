@@ -17,8 +17,9 @@ const siteMenuComponent = new SiteMenuView();
 const filterModel = new FilterModel();
 const pointsModel = new PointsModel(new ApiService());
 
-const tripPresenter = new TripPresenter(mainSort, pointsModel, filterModel);
 const filterPresenter = new FilterPresenter(controlsFilters, filterModel, pointsModel);
+const tripPresenter = new TripPresenter(mainSort, pointsModel, filterModel);
+
 
 // show menu
 let statisticsComponent = null;
@@ -65,5 +66,8 @@ document.querySelector('.trip-main__event-add-btn').addEventListener('click', (e
   tripPresenter.createPoint(handleNewPointFormClose);
 
   disableChildren(document.querySelector('.trip-main__trip-controls'));
-  disableChildren(document.querySelector('.trip-events__trip-sort'));
+  const sortComponent = document.querySelector('.trip-events__trip-sort');
+  if (sortComponent) {
+    disableChildren(sortComponent);
+  }
 });

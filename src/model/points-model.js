@@ -78,6 +78,7 @@ export default class PointsModel extends AbstractObservable {
       const response = await this.#apiService.addPoint(update);
       const newPoint = this.#adaptToClient(response);
       this.#points = [newPoint, ...this.#points];
+
       this._notify(updateType, newPoint);
     } catch {
       throw new Error('Can\'t add point');

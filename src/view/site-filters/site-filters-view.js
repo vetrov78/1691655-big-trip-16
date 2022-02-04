@@ -3,14 +3,16 @@ import { createSiteFiltersTemplate } from './site-filters.tpl';
 
 export default class SiteFiltersView extends AbstractView {
   #currentFilter = null;
+  #filterStatus = null
 
-  constructor(currentFilter) {
+  constructor(currentFilter, filterStatus) {
     super();
     this.#currentFilter = currentFilter;
+    this.#filterStatus = filterStatus;
   }
 
   get template() {
-    return createSiteFiltersTemplate(this.#currentFilter);
+    return createSiteFiltersTemplate(this.#currentFilter, this.#filterStatus);
   }
 
   setFilterTypeChangeHandler = (callback) => {

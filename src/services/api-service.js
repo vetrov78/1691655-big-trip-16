@@ -8,7 +8,7 @@ const Method = {
 };
 
 const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
-const AUTHORIZATION = 'Basic hS2sfS44wcl1sa2j';
+const AUTHORIZATION = 'Basic hS2sfS44wsl1sa2j';
 
 export default class ApiService {
 

@@ -231,7 +231,9 @@ export default class TripPresenter {
       return;
     }
     // Добавляет блок с общей информацией о маршруте
-    this.#renderTripInfo();
+    if (this.#pointsModel.points.length > 0) {
+      this.#renderTripInfo();
+    }
 
     this.#destinations = this.#pointsModel.destinations;
     this.#offers = this.#pointsModel.offers;
