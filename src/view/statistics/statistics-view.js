@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { getDurationString } from '../../utils/utils';
 
 import SmartView from '../smart-view';
-import { createStatisticsTemplate } from './site-statistics.tpl';
+import { createStatisticsTemplate } from './statistics.tpl';
 
 const renderMoneyChart = (moneyCtx, moneyByType) => (
   new Chart(moneyCtx, {
@@ -234,27 +234,27 @@ export default class StatisticsView extends SmartView {
 
     const moneyByType = _(this._data)
       .groupBy('type')
-      .map((array, key) => ({
+      .map((points, key) => ({
         'type': key,
-        'money': _.sumBy(array, 'basePrice')
+        'money': _.sumBy(points, 'basePrice')
       }))
       .orderBy('money', 'desc')
       .value();
 
     const countByType = _(this._data)
       .groupBy('type')
-      .map((array, key) => ({
+      .map((points, key) => ({
         'type': key,
-        'count': array.length,
+        'count': points.length,
       }))
       .orderBy('count', 'desc')
       .value();
 
     const timeByType = _(this._data)
       .groupBy('type')
-      .map((array, key) => ({
+      .map((points, key) => ({
         'type': key,
-        'time': _.sumBy(array, 'duration')
+        'time': _.sumBy(points, 'duration')
       }))
       .orderBy('time', 'desc')
       .value();

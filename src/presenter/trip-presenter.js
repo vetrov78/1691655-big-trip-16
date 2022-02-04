@@ -3,12 +3,12 @@ import { RenderPosition, render, remove } from '../utils/render';
 import { sortFinishTimeUp, sortStartTimeDown, sortTimeDown } from '../utils/utils';
 import { filter } from '../utils/filter';
 
-import PointsListView from '../view/site-list/site-list-view';
+import PointsListView from '../view/points-list/points-list-view';
 import SiteSortView from '../view/site-sort/site-sort-view';
 import PointPresenter, {State as PointPresenterViewState} from './point-presenter';
 import SiteNoPointView from '../view/site-no-point/site-no-point-view';
 import PointNewPresenter from './point-new-presenter';
-import LoadingView from '../view/site-loading/site-loading-view';
+import SiteLoadingView from '../view/site-loading/site-loading-view';
 import SiteTripInfoView from '../view/site-trip-info/site-trip-info-view';
 import dayjs from 'dayjs';
 
@@ -21,7 +21,7 @@ export default class TripPresenter {
   #sortComponent = null;
   #noPointsComponent = null;
   #pointsListComponent = new PointsListView();
-  #loadingComponent = new LoadingView();
+  #loadingComponent = new SiteLoadingView();
 
   #offers = null;
   #destinations = null;
@@ -146,8 +146,6 @@ export default class TripPresenter {
     remove(this.#pointsListComponent);
 
     if (this.#noPointsComponent) {
-      console.log(this.#noPointsComponent);
-
       remove(this.#noPointsComponent);
     }
 
@@ -193,26 +191,27 @@ export default class TripPresenter {
     const tripInfo = {};
     const points = this.#pointsModel.points;
 
+    const firstPoint = points.sort(sortStartTimeDown)[0];
+    const lastPoint = points.sort(sortFinishTimeUp)[0];
+
     // Города
     const destinationNames = [...new Set(points.map((item) => item.destination.name))];
     if (destinationNames.length > 3) {
-      tripInfo.cities = `${destinationNames[0]} - ... - ${destinationNames[destinationNames.length - 1]}`;
+      tripInfo.cities = `${firstPoint.destination.name} - ... - ${lastPoint.destination.name}`;
     } else {
       tripInfo.cities = `${destinationNames[0]} - ${destinationNames[1]} - ${destinationNames[2]}`;
     }
 
     // Даты
-    const firstDateFrom = points.sort(sortStartTimeDown)[0].dateFrom;
-    const lastDateTo = points.sort(sortFinishTimeUp)[0].dateTo;
-    tripInfo.dates = `${dayjs(firstDateFrom).format('MMM D')} - ${dayjs(lastDateTo).format('MMM D')}`;
+    tripInfo.dates = `${dayjs(firstPoint.dateFrom).format('MMM D')} - ${dayjs(lastPoint.dateTo).format('MMM D')}`;
 
     // Стоимость
     const basePriceTotal = points.map((item) => item.basePrice).reduce((a, b) => a + b);
 
-    const arrayOfPointsOffers = points.map((item) => item.offers);
+    const PointsOffers = points.map((item) => item.offers);
     const getPointOffersTotal = (previousTotal, currentOffer) => previousTotal + currentOffer.price;
     const getOffersTotal = (previousTotal, currentPointOffers) => previousTotal + currentPointOffers.reduce(getPointOffersTotal, 0);
-    const offersPriceTotal = arrayOfPointsOffers.reduce(getOffersTotal, 0);
+    const offersPriceTotal = PointsOffers.reduce(getOffersTotal, 0);
 
     tripInfo.totalPrice = basePriceTotal + offersPriceTotal;
 

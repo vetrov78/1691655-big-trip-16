@@ -6,7 +6,7 @@ import TripPresenter from './presenter/trip-presenter';
 import FilterPresenter from './presenter/filter-presenter';
 import PointsModel from './model/points-model';
 import FilterModel from './model/filter-model';
-import StatisticsView from './view/site-statistics/site-statistics-view';
+import StatisticsView from './view/statistics/statistics-view';
 import ApiService from './services/api-service';
 
 const controlsNavigation = document.querySelector('.trip-controls__navigation');

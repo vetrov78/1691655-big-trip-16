@@ -1,6 +1,6 @@
 import { FilterType, UpdateType } from '../consts';
 import { render, replace, remove, RenderPosition} from '../utils/render';
-import SiteFilterView from '../view/site-filters/site-filters-view';
+import SiteFiltersView from '../view/site-filters/site-filters-view';
 
 export default class FilterPresenter {
   #filterContainer = null;
@@ -20,7 +20,7 @@ export default class FilterPresenter {
   init = () => {
     const prevFilterComponent = this.#filterComponent;
 
-    this.#filterComponent = new SiteFilterView(this.#filterModel.filter);
+    this.#filterComponent = new SiteFiltersView(this.#filterModel.filter);
     this.#filterComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
 
     this.#filterModel.addObserver(this.#handleModelEvent);

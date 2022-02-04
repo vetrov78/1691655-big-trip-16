@@ -1,5 +1,5 @@
 import SitePointView from '../view/site-point/site-point-view';
-import EditPointView from '../view/site-point-edit/site-point-edit-view';
+import EditPointView from '../view/edit-point/edit-point-view';
 
 import { isEscPressed, isDatesEqualInMinutes } from '../utils/utils';
 import { RenderPosition, render, replace, remove, disableChildren } from '../utils/render';

@@ -1,6 +1,6 @@
 import AbstractView from '../abstract-view';
 
-export default class LoadingView extends AbstractView {
+export default class SiteLoadingView extends AbstractView {
   get template() {
     return '<p class="trip-events__msg">Loading...</p>';
   }

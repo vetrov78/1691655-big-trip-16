@@ -1,7 +1,7 @@
 import AbstractView from '../abstract-view';
 import { createSiteFiltersTemplate } from './site-filters.tpl';
 
-export default class SiteFilterView extends AbstractView {
+export default class SiteFiltersView extends AbstractView {
   #currentFilter = null;
 
   constructor(currentFilter) {

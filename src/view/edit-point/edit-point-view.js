@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import SmartView from '../smart-view';
-import { createEditPointTemplate } from './site-point-edit.tpl';
+import { createEditPointTemplate } from './edit-point.tpl';
 import flatpickr from 'flatpickr';
 import { checkDatesOrder } from '../../utils/utils';
 
