@@ -77,6 +77,11 @@ export default class TripPresenter {
 
   createPoint = (callback) => {
     this.#pointNewPresenter.init(callback);
+    if (this.#noPointsComponent) {
+
+      remove(this.#noPointsComponent);
+
+    }
   }
 
   #handleViewAction = async (actionType, updateType, update) => {

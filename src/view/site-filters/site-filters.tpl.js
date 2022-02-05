@@ -21,7 +21,7 @@ export const createSiteFiltersTemplate = (currentFilter, filterStatus) => {
   Object.keys(FilterType).forEach(
     (key) => {
       filterItems += createFilterItemTemplate(FilterType[key], filterStatus[key], currentFilter);
-    }
+    },
   );
 
   return `<form class="trip-filters" action="#" method="get">

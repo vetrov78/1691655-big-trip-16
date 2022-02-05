@@ -1,7 +1,7 @@
-import AbstractView from '../abstract-view';
+import SmartView from '../smart-view';
 import { createNoPointsTemplate } from './site-no-points.tpl';
 
-export default class SiteNoPointView extends AbstractView {
+export default class SiteNoPointView extends SmartView {
   constructor(data) {
     super();
     this._data = data;
