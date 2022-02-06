@@ -173,7 +173,7 @@ export default class TripPresenter {
     render(this.#tripContainer, this.#sortComponent, RenderPosition.BEFOREEND);
   }
 
-  #renderNoPoints = () => {
+  renderNoPoints = () => {
     this.#noPointsComponent = new SiteNoPointView(this.#filterType);
     render(this.#tripContainer, this.#noPointsComponent, RenderPosition.AFTERBEGIN);
   };
@@ -253,8 +253,9 @@ export default class TripPresenter {
     this.#pointNewPresenter = new PointNewPresenter(this.#pointsListComponent, this.#handleViewAction, this.#offers, this.#destinations);
 
     const pointsLength = this.points.length;
+
     if (pointsLength === 0) {
-      this.#renderNoPoints(this.#filterType);
+      this.renderNoPoints();
       return;
     }
     this.#renderSort();

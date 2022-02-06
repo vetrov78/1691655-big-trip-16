@@ -51,7 +51,13 @@ const handleNewPointFormClose = () => {
   document.querySelector('.trip-main__event-add-btn').disabled = false;
 
   enableChildren(document.querySelector('.trip-main__trip-controls'));
-  enableChildren(document.querySelector('.trip-events__trip-sort'));
+  const sortComponent = document.querySelector('.trip-events__trip-sort');
+  if (sortComponent) {
+    enableChildren(sortComponent);
+  }
+  if (tripPresenter.points.length === 0) {
+    tripPresenter.renderNoPoints();
+  }
 };
 
 document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
