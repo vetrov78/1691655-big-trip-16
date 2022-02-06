@@ -77,10 +77,9 @@ export default class TripPresenter {
 
   createPoint = (callback) => {
     this.#pointNewPresenter.init(callback);
+
     if (this.#noPointsComponent) {
-
       remove(this.#noPointsComponent);
-
     }
   }
 
@@ -193,7 +192,9 @@ export default class TripPresenter {
   }
 
   #getTripInfo = () => {
-    const tripInfo = {};
+    const tripInfo = {
+      cities: '',
+    };
     const points = this.#pointsModel.points;
 
     const firstPoint = points.sort(sortStartTimeDown)[0];
@@ -201,10 +202,16 @@ export default class TripPresenter {
 
     // Города
     const destinationNames = [...new Set(points.map((item) => item.destination.name))];
-    if (destinationNames.length > 3) {
+
+    const destinationsNumber = destinationNames.length;
+
+    if (destinationsNumber > 3) {
       tripInfo.cities = `${firstPoint.destination.name} - ... - ${lastPoint.destination.name}`;
     } else {
-      tripInfo.cities = `${destinationNames[0]} - ${destinationNames[1]} - ${destinationNames[2]}`;
+      for (let i = destinationsNumber; i > 0; i--) {
+        tripInfo.cities = `${tripInfo.cities} ${destinationNames[i - 1]} -`;
+      }
+      tripInfo.cities = tripInfo.cities.slice(0, -2);
     }
 
     // Даты

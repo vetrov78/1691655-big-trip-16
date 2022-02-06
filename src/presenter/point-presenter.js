@@ -43,11 +43,12 @@ export default class PointPresenter {
   init = (point) => {
     this.#point = point;
 
+    const isNewPoint = false;
     const prevPointComponent = this.#pointComponent;
     const prevEditComponent = this.#pointEditComponent;
 
     this.#pointComponent = new SitePointView(this.#point);
-    this.#pointEditComponent = new EditPointView(this.#pointTypes, this.#destinations, this.#point);
+    this.#pointEditComponent = new EditPointView(this.#pointTypes, this.#destinations, isNewPoint, this.#point);
 
     this.#pointComponent.setOpenEditHandler(this.#handleOpenEditClick);
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);

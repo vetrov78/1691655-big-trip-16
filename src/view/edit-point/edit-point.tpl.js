@@ -56,7 +56,7 @@ const createPhotosList = (pictures) => pictures
   .map((picture) => (`<img class="event__photo" src="${picture.src}" alt="${picture.description}">`))
   .join('');
 
-export const createEditPointTemplate = (data, pointTypes, destinations) => {
+export const createEditPointTemplate = (data, pointTypes, destinations, isNewPoint) => {
 
   const {basePrice, dateFrom, dateTo, destination, offers: choosenOffers, type, isDeleting, isSaving} = data;
   const pointType = pointTypes.find((element) => element.type === type);
@@ -108,12 +108,13 @@ export const createEditPointTemplate = (data, pointTypes, destinations) => {
                 <button class="event__save-btn  btn  btn--blue" type="submit">
                   ${isSaving ? 'Saving' : 'Save'}
                 </button>
-                <button class="event__reset-btn" type="reset">
-                  ${isDeleting ? 'Deleting' : 'Delete'}
-                </button>
-                <button class="event__rollup-btn" type="button">
-                  <span class="visually-hidden">Open event</span>
-                </button>
+                ${!isNewPoint ? `<button class="event__reset-btn" type="reset">
+                                  ${isDeleting ? 'Deleting' : 'Delete'}
+                                </button>
+                                <button class="event__rollup-btn" type="button">
+                                  <span class="visually-hidden">Open event</span>
+                                </button>` : '<button class="event__reset-btn" type="reset">Cancel</button>'}
+
               </header>
               <section class="event__details">
                 <section class="event__section  event__section--offers">

@@ -29,12 +29,15 @@ export default class EditPointView extends SmartView {
   #pointTypes = null;
   #destinations = null;
 
-  constructor (pointTypes, destinations, point = BLANK_POINT) {
+  #isNewPoint = false;
+
+  constructor (pointTypes, destinations, isNewPoint = false, point = BLANK_POINT) {
     super();
 
     this.#chosenType = pointTypes.find((el) => el.type === point.type);
     this.#pointTypes = pointTypes;
     this.#destinations = destinations;
+    this.#isNewPoint = isNewPoint;
 
     if (!point.destination.name) {
       point.destination.name = this.#destinations[0].name;
@@ -50,7 +53,7 @@ export default class EditPointView extends SmartView {
   }
 
   get template() {
-    return createEditPointTemplate(this._data, this.#pointTypes, this.#destinations);
+    return createEditPointTemplate(this._data, this.#pointTypes, this.#destinations, this.#isNewPoint);
   }
 
   removeElement = () => {
@@ -186,7 +189,12 @@ export default class EditPointView extends SmartView {
 
   setCloseClickHandler = (callback) => {
     this._callback.closeClick = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
+
+    if (this.#isNewPoint) {
+      this.element.querySelector('.event__reset-btn').addEventListener('click', this.#closeClickHandler);
+    } else {
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
+    }
   }
 
   #closeClickHandler = (evt) => {
