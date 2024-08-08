@@ -7,8 +7,8 @@ const Method = {
   DELETE: 'DELETE',
 };
 
-const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
-const AUTHORIZATION = 'Basic bS2sfS44wsl1sa2j';
+const END_POINT = 'https://20.objects.htmlacademy.pro/big-trip';
+const AUTHORIZATION = 'Basic dmV0cm92Nzg6dmV0cm92Nzg=';
 
 export default class ApiService {
 

@@ -27,6 +27,10 @@ export default class PointsModel extends AbstractObservable {
     return this.#offers;
   }
 
+  getDestinationById = (id) => {
+    this.#destinations.find((destination) => destination.id === id);
+  }
+
   init = async () => {
     try {
       const points = await this.#apiService.points;

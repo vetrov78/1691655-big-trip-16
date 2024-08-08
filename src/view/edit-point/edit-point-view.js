@@ -11,11 +11,7 @@ const BLANK_POINT = {
   basePrice: 0,
   dateFrom: dayjs(),
   dateTo: dayjs().add(1, 'day'),
-  destination: {
-    name: '',
-    description: '',
-    pictures: [],
-  },
+  destination: '',
   isFavorite: false,
   offers: [],
   type: 'taxi',
@@ -39,10 +35,10 @@ export default class EditPointView extends SmartView {
     this.#destinations = destinations;
     this.#isNewPoint = isNewPoint;
 
-    if (!point.destination.name) {
-      point.destination.name = this.#destinations[0].name;
-      point.destination.description = this.#destinations[0].description;
-      point.destination.pictures = this.#destinations[0].pictures;
+    if (!point.destination) {
+      point.destination = this.#destinations[0].id;
+      // point.destination.description = this.#destinations[0].description;
+      // point.destination.pictures = this.#destinations[0].pictures;
     }
 
     this._data = EditPointView.parsePointToData(point);

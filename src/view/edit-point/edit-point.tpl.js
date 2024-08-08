@@ -58,7 +58,7 @@ const createPhotosList = (pictures) => pictures
 
 export const createEditPointTemplate = (data, pointTypes, destinations, isNewPoint) => {
 
-  const {basePrice, dateFrom, dateTo, destination, offers: choosenOffers, type, isDeleting, isSaving} = data;
+  const { basePrice, dateFrom, dateTo, destination, offers: choosenOffers, type, isDeleting, isSaving } = data;
   const pointType = pointTypes.find((element) => element.type === type);
 
   return `<li class="trip-events__item">
@@ -71,13 +71,13 @@ export const createEditPointTemplate = (data, pointTypes, destinations, isNewPoi
                   </label>
                   <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
-                  ${createEventTypeList(pointTypes)}
+                  ${ createEventTypeList(pointTypes) }
 
                 </div>
 
                 <div class="event__field-group  event__field-group--destination">
                   <label class="event__label  event__type-output" for="event-destination-1">
-                    ${type}
+                    ${ type }
                   </label>
                   <input  class="event__input  event__input--destination"
                           id="event-destination-1"
@@ -86,7 +86,7 @@ export const createEditPointTemplate = (data, pointTypes, destinations, isNewPoi
                           value="${destination.name}"
                           list="destination-list-1"
                   >
-                  ${createDestinationsList(destinations)}
+                  ${ createDestinationsList(destinations) }
                 </div>
 
                 <div class="event__field-group  event__field-group--time">
@@ -106,20 +106,20 @@ export const createEditPointTemplate = (data, pointTypes, destinations, isNewPoi
                 </div>
 
                 <button class="event__save-btn  btn  btn--blue" type="submit">
-                  ${isSaving ? 'Saving' : 'Save'}
+                  ${ isSaving ? 'Saving' : 'Save' }
                 </button>
-                ${!isNewPoint ? `<button class="event__reset-btn" type="reset">
-                                  ${isDeleting ? 'Deleting' : 'Delete'}
+                ${ !isNewPoint ? `<button class="event__reset-btn" type="reset">
+                                  ${ isDeleting ? 'Deleting' : 'Delete' }
                                 </button>
                                 <button class="event__rollup-btn" type="button">
                                   <span class="visually-hidden">Open event</span>
-                                </button>` : '<button class="event__reset-btn" type="reset">Cancel</button>'}
+                                </button>` : '<button class="event__reset-btn" type="reset">Cancel</button>' }
 
               </header>
               <section class="event__details">
                 <section class="event__section  event__section--offers">
                   <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-                  ${createOffers(pointType, choosenOffers)}
+                  ${ createOffers(pointType, choosenOffers) }
                 </section>
 
                 <section class="event__section  event__section--destination">
@@ -128,7 +128,7 @@ export const createEditPointTemplate = (data, pointTypes, destinations, isNewPoi
                   <div class="event__photos-container">
                       <div class="event__photos-tape">
 
-                        ${createPhotosList(destination.pictures)}
+                        ${ createPhotosList(destinations.find((destination) => destination.id === data.destination).pictures) }
 
                       </div>
                     </div>

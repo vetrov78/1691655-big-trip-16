@@ -20,7 +20,6 @@ const pointsModel = new PointsModel(new ApiService());
 const filterPresenter = new FilterPresenter(controlsFilters, filterModel, pointsModel);
 const tripPresenter = new TripPresenter(mainSort, pointsModel, filterModel);
 
-
 // show menu
 let statisticsComponent = null;
 
